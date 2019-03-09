@@ -15,10 +15,16 @@ class Occupation(models.Model):
         (MAGE, 'Mage')
     )
 
+    # TODO create separate class for this data ?
+
+    WARRIOR_MODULE = 'hero_upgrade_system.models.abilities.warrior'
+    MAGE_MODULE = 'hero_upgrade_system.models.abilities.mage'
+    THIEF_MODULE = 'hero_upgrade_system.models.abilities.thief'
+
     MODULES = (
-        (WARRIOR, 'hero_upgrade_system.models.abilities.warrior'),
-        (MAGE, 'hero_upgrade_system.models.abilities.mage'),
-        (THIEF, 'hero_upgrade_system.models.abilities.thief'),
+        (WARRIOR, WARRIOR_MODULE),
+        (MAGE, MAGE_MODULE),
+        (THIEF, THIEF_MODULE),
     )
 
     name = models.CharField(max_length=35, choices=OCCUPATIONS)
