@@ -14,7 +14,7 @@ class TestAbility(TestCase):
         ability = Ability(
             name='charge',
             occupation=self.occupation,
-            parent=None,
+            parent_ability=None,
             unblock_level=0,
             level=1,
             category=Ability.ACTIVE,
