@@ -7,7 +7,7 @@ class Occupation(models.Model):
     MAGE = 'mage'
 
     # TODO occupation name and module should be related!
-    # now I can choose different module to different name
+    # now I can choose different module for different name
 
     OCCUPATIONS = (
         (WARRIOR, 'Warrior'),
