@@ -13,10 +13,10 @@ class Ability(models.Model):
     name = models.CharField(max_length=35)
     occupation = models.ForeignKey(Occupation, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
-    level = models.PositiveIntegerField()
+    level = models.PositiveIntegerField(default=0)
     unblock_level = models.PositiveIntegerField()
     category = models.CharField(max_length=35, choices=CATEGORIES)
-    ability_function = models.CharField(max_length=100) # occupation.module.function
+    function = models.CharField(max_length=100) # occupation.module.function
     
     def is_blocked(self):
         """Parent level must be equal or bigger than unblock level."""
