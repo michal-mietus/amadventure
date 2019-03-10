@@ -17,18 +17,23 @@ class Occupation(models.Model):
 
     # TODO create separate class for this data ?
 
-    WARRIOR_MODULE = 'hero_upgrade_system.models.abilities.warrior'
-    MAGE_MODULE = 'hero_upgrade_system.models.abilities.mage'
-    THIEF_MODULE = 'hero_upgrade_system.models.abilities.thief'
+    WARRIOR_MODULE = 'hero_upgrade_system.models.occupations.warrior'
+    MAGE_MODULE = 'hero_upgrade_system.models.occupations.mage'
+    THIEF_MODULE = 'hero_upgrade_system.models.occupations.thief'
 
     MODULES = (
-        (WARRIOR, WARRIOR_MODULE),
-        (MAGE, MAGE_MODULE),
-        (THIEF, THIEF_MODULE),
+        (WARRIOR_MODULE, WARRIOR_MODULE),
+        (MAGE_MODULE, MAGE_MODULE),
+        (THIEF_MODULE, THIEF_MODULE),
     )
 
     name = models.CharField(max_length=35, choices=OCCUPATIONS)
     module = models.CharField(max_length=100, choices=MODULES)
+
+    # usage module
+    # __import__(module)
+    # vars(module.models.occupations.<occupation>)[function_name] 
+    # don't know why import only main app folder.
 
     def __str__(self):
         return self.name
