@@ -19,7 +19,7 @@ class TestAbility(TestCase):
             unblock_level=0,
             level=level,
             category=Ability.ACTIVE,
-            ability_function='charge',
+            function='charge',
         )
         return ability
 
