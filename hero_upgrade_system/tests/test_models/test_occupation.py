@@ -10,3 +10,10 @@ class TestOccupation(TestCase):
             name=name,
             module=module,
         )
+
+    def test_occupation_string_representation(self):
+        occupation = Occupation.objects.create(
+            name=Occupation.WARRIOR,
+            module=Occupation.WARRIOR_MODULE,
+        )
+        self.assertEqual(str(occupation), occupation.name)
