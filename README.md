@@ -1,0 +1,2 @@
+python3 manage.py create_occupations
+python3 manage.py create_abilities
