@@ -12,7 +12,7 @@ class Ability(models.Model):
 
     name = models.CharField(max_length=35)
     occupation = models.ForeignKey(Occupation, on_delete=models.CASCADE)
-    parent_ability = models.ForeignKey('self', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     level = models.PositiveIntegerField()
     unblock_level = models.PositiveIntegerField()
     category = models.CharField(max_length=35, choices=CATEGORIES)
@@ -20,6 +20,6 @@ class Ability(models.Model):
     
     def is_blocked(self):
         """Parent level must be equal or bigger than unblock level."""
-        if parent.level >= unblock_level:
+        if self.parent.level >= self.unblock_level:
             return False
         return True
