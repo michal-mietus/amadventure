@@ -15,3 +15,13 @@ class Hero(models.Model):
         return 'Hero ' + self.name 
 
     ## skills = upgrade_sys.upgrade__skills.all (or one to one?)
+
+    def get_all_stats(self):
+        return self.statistic_set.all()
+
+    def upgrade_stats(self, **stats):
+        statistics = self.get_all_stats()
+        for statistic in statistics:
+            statistic.points += stats[statistic.name]
+            statistic.save()
+            pass
