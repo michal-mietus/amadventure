@@ -27,7 +27,7 @@ class TestStatistic(TestCase):
         )
 
     def test_create_statistic_object(self):
-        Statistic.object.create(
+        Statistic.objects.create(
             name=Statistic.STRENGTH,
             points=1,
             hero=self.create_hero()
