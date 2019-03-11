@@ -29,5 +29,45 @@ class TestHeroAbility(TestCase):
             parent=self.hero_parent_ability
         )
 
-    def test(self):
-        pass
+    def create_warrior_active_ability(self, name, unblock_level):
+        return Ability.objects.create(
+            name=warrior.abilities[name],
+            occupation=self.occupation,
+            unblock_level=unblock_level,
+            category=Ability.ACTIVE,
+            function=name
+        )
+
+    def test_ability_is_blocked(self):
+        charge_ability = self.create_warrior_active_ability('charge', 0)
+        super_charge_ability = self.create_warrior_active_ability('super_charge', 3)
+
+        hero_parent_ability = HeroAbility.objects.create(
+            ability=charge_ability,
+            parent=None,
+            level=2
+        )
+
+        hero_child_ability = HeroAbility.objects.create(
+            ability=super_charge_ability,
+            parent=hero_parent_ability
+        )
+
+        self.assertEqual(hero_child_ability.is_blocked(), True)
+
+    def test_ability_is_unblocked(self):
+        charge_ability = self.create_warrior_active_ability('charge', 0)
+        super_charge_ability = self.create_warrior_active_ability('super_charge', 3)
+
+        hero_parent_ability = HeroAbility.objects.create(
+            ability=charge_ability,
+            parent=None,
+            level=4
+        )
+
+        hero_child_ability = HeroAbility.objects.create(
+            ability=super_charge_ability,
+            parent=hero_parent_ability
+        )
+
+        self.assertEqual(hero_child_ability.is_blocked(), False)
