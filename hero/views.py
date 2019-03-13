@@ -1,20 +1,21 @@
 from django.views.generic.edit import FormView
-from django.views.generic import View
+from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from hero_upgrade_system.models import occupations
 from hero_upgrade_system.models.occupation import Occupation
+from .decorators import deny_access_user_with_hero
 from .models.hero import Hero
 from .forms import HeroCreateForm
 
 
-class MainView(View):
-    pass
+class MainView(TemplateView):
+    template_name = 'hero/main.html'
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator([login_required, deny_access_user_with_hero], name='dispatch')
 class HeroCreateView(FormView):
     form_class = HeroCreateForm
     template_name = 'hero/hero_create.html'
