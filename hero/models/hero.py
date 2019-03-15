@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from hero_upgrade_system.models.occupation import Occupation
+from hero_upgrade_system.models.ability import Ability
 
 
 class Hero(models.Model):
@@ -34,3 +37,20 @@ class Hero(models.Model):
         for statistic in self.statistic_set.all():
             points_sum += statistic.points
         return points_sum
+
+    def create_new_hero_abilities(self):
+        """Callled when user is creating hero. """
+        hero_occupation = self.occupation
+        for ability in self.get_all_occuppation_abilities():
+            parent_ability = self.get_hero_ability_parent(ability)
+            HeroAbility.objects.create(
+                hero=hero,
+                ability=ability,
+                parent=parent_ability,
+            )
+        
+    def get_all_occuppation_abilities(self):
+        return Ability.objects.filter(occupation=self.occupation)
+
+    def get_hero_ability_parent(self, ability):
+        return HeroAbility.objects.get(name=ability.parent.name, hero=self)
