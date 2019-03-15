@@ -30,3 +30,8 @@ class TestAbility(TestCase):
             unblock_level=0,
             category=Ability.ACTIVE,
         )
+
+    def test_str_representation(self):
+        name = 'str'
+        ability = self.create_ability(name, 10)
+        self.assertEqual(str(ability), name)

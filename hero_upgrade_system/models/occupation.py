@@ -27,8 +27,19 @@ class Occupation(models.Model):
         (THIEF_MODULE, THIEF_MODULE),
     )
 
+    WARRIOR_DESCRIPTION = 'Warrior is ...'
+    MAGE_DESCRIPTION = 'Mage is ...'
+    THIEF_DESCRIPTION = 'Thief is ...'
+
+    DESCRIPTIONS = (
+        (WARRIOR_DESCRIPTION, WARRIOR_DESCRIPTION),
+        (MAGE_DESCRIPTION, MAGE_DESCRIPTION),
+        (THIEF_DESCRIPTION, THIEF_DESCRIPTION),
+    )
+
     name = models.CharField(max_length=35, choices=OCCUPATIONS)
     module = models.CharField(max_length=100, choices=MODULES)
+    description = models.TextField()
 
     # usage module
     # __import__(module)
