@@ -71,3 +71,6 @@ class TestHeroAbility(TestCase):
         )
 
         self.assertEqual(hero_child_ability.is_blocked(), False)
+
+    def test_get_parent(self):
+        parent = self.hero_ability.get_parent()
