@@ -5,9 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.shortcuts import render
+from django.core import serializers
 from hero_upgrade_system.models import occupations
 from hero_upgrade_system.models.occupation import Occupation
 from hero_upgrade_system.models.statistics import Statistic
+from hero.models.hero import Ability, HeroAbility
 from .decorators import deny_access_user_with_hero, hero_required
 from .models.hero import Hero
 from .forms import HeroCreateForm, StatisticsChangeForm, AbilitiesChangeForm
@@ -117,9 +119,22 @@ class AbilitiesUpdateView(FormView):
     template_name = 'hero/abilities_update.html'
     success_url = 'hero/main.html'
 
-    def get_occupation_with_abilities(self):
-        warrior_abilities = occupations.warrior.abilities
-        thief_abilities = occupations.thief.abilities
-        mage_abilities = occupations.mage.abilities
+    def form_valid()
 
-        return [warrior_abilities, thief_abilities, mage_abilities]
+
+    def update_hero_abilities(self):
+        """Called when hero abilities are already created. """
+        pass
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['abilities'] = self.get_hero_abilities()
+
+    def get_hero_abilities(self):
+        return HeroAbility.objects.filter(hero=self.get_current_hero())
+
+    def get_current_hero(self):
+        return Hero.objects.get(user=self.get_current_user())
+
+    def get_current_user(self):
+        return User.objects.get(pk=self.request.pk)
