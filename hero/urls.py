@@ -6,6 +6,6 @@ app_name = 'hero'
 urlpatterns = [
     path('main/', views.MainView.as_view(), name='main'),
     path('create/', views.HeroCreateView.as_view(), name='hero_create'),
-    path('change/statistics/', views.StatisticsChangeView.as_view(), name='statistics_change'),
-    path('change/abilities/', views.AbilitiesChangeView.as_view(), name='abilities_change'),
+    path('change/statistics/', views.StatisticsUpdateView.as_view(), name='statistics_update'),
+    path('change/abilities/', views.AbilitiesUpdateView.as_view(), name='abilities_update'),
 ]
