@@ -2,6 +2,7 @@ from django.test import TestCase, Client, RequestFactory
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy, reverse
 from hero_upgrade_system.models.occupation import Occupation
+from hero_upgrade_system.models.ability import Ability
 from hero.models.hero import Hero
 from ...views import HeroCreateView
 
@@ -44,3 +45,12 @@ class TestCreateHeroView(TestCase):
         self.client.login(username='user', password='password')
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'hero/hero_create.html')
+
+    def test_hero_created_new_abilities(self):
+        self.client.login(username='user', password='password')
+        response = self.client.post(self.url, {
+            'name': 'hero',
+            'occupation': Occupation.WARRIOR
+        })
+        hero = Hero.objects.get(user=self.user)
+        self.assertEqual(len(hero.heroability_set.all()), len(Ability.objects.all()))

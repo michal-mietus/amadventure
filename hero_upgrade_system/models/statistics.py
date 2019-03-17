@@ -14,5 +14,5 @@ class Statistic(models.Model):
     )
 
     name = models.CharField(max_length=35, choices=STATISTICS)
-    points = models.PositiveIntegerField()
+    points = models.PositiveIntegerField(default=5)
     hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
