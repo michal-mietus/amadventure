@@ -1,22 +1,23 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.core import serializers
+from django.core.management import call_command
 from django.contrib.auth.models import User
 from hero_upgrade_system.models.occupation import Occupation
 from hero_upgrade_system.models.statistics import Statistic
-from hero.models.hero import Ability
+from hero_upgrade_system.models.ability import Ability, HeroAbility
+from hero_upgrade_system.management.commands.create_abilities import Command as CreateAbilities
+from hero_upgrade_system.management.commands.create_occupations import Command as CreateOccupations
 from hero.views import AbilitiesUpdateView
 from hero.models.hero import Hero
 
 
-class TestAbilitiesChangeView(TestCase):
+class TestAbilitiesUpdateView(TestCase):
     def setUp(self):
+        CreateOccupations().handle()
         self.url = reverse('hero:abilities_update')
         self.user = User.objects.create_user(username='username', password='password')
-        self.occupation = Occupation.objects.create(
-            name=Occupation.WARRIOR,
-            module=Occupation.WARRIOR_MODULE,
-            description=Occupation.WARRIOR_DESCRIPTION,
-        )
+        self.occupation = Occupation.objects.get(name=Occupation.WARRIOR)
         self.hero = Hero.objects.create(user=self.user, name='hero', occupation=self.occupation)
         self.create_statistics()
 
@@ -33,8 +34,57 @@ class TestAbilitiesChangeView(TestCase):
         return Ability.objects.filter(occupation=self.hero.occupation)
 
     def test_context(self):
+        self.client.login(username='username', password='password')
         response = self.client.get(self.url)
-        self.assertQuerysetEqual(response.context, self.abilities_which_can_choose_hero())
+        hero_abilities = HeroAbility.objects.filter(hero=self.hero)
+        context = serializers.serialize('json', hero_abilities)
+        self.assertEqual(response.context['abilities'], context)
 
     def test_valid_form(self):
-        pass
+        self.create_and_login_user()
+        hero = self.get_created_hero_through_view('hero2')
+        hero_abilities_before_update = hero.heroability_set.all()
+        hero.ability_points = len(hero_abilities_before_update) * 3
+        hero.save()
+
+        increase_points = 3
+        changed_abilities_data_to_post = self.create_updated_heroability_data_to_post(hero, increase_points)
+        response = self.client.post(self.url, data=changed_abilities_data_to_post)
+
+        for hero_ability_before in hero_abilities_before_update:
+            updated_hero_ability = HeroAbility.objects.get(hero=hero, ability__name=hero_ability_before.ability.name)
+            self.assertEqual((hero_ability_before.level + increase_points), updated_hero_ability.level)
+        
+    def test_invalid_form(self):
+        # check if invalid it should response with context.error
+        self.create_and_login_user()
+        hero = self.get_created_hero_through_view('hero2')
+
+        hero_abilities_before_update = hero.heroability_set.all()
+        hero.ability_points = len(hero_abilities_before_update) * 3
+        hero.save()
+
+        increase_points = 5
+        changed_abilities_data_to_post = self.create_updated_heroability_data_to_post(hero, increase_points)
+        response = self.client.post(self.url, data=changed_abilities_data_to_post)
+
+        for hero_ability_before in hero_abilities_before_update:
+            updated_hero_ability = HeroAbility.objects.get(hero=hero, ability__name=hero_ability_before.ability.name)
+            self.assertEqual(hero_ability_before.level, updated_hero_ability.level)
+
+    def create_and_login_user(self):
+        User.objects.create_user(username='username2', password='password2')
+        self.client.login(username='username2', password='password2')
+
+    def get_created_hero_through_view(self, hero_name):
+        self.client.post(reverse('hero:hero_create'), {
+            'name': hero_name,
+            'occupation': Occupation.WARRIOR,
+        })
+        return  Hero.objects.get(name=hero_name)
+
+    def create_updated_heroability_data_to_post(self, hero, increase_points):
+        updated_abilities_data = {}
+        for hero_ability in HeroAbility.objects.filter(hero=hero):
+            updated_abilities_data[hero_ability.ability.name] = hero_ability.level + increase_points
+        return updated_abilities_data
