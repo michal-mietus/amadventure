@@ -40,6 +40,5 @@ class HeroAbility(models.Model):
             return False
         return True
 
-    def get_parent(self):
-        parent_ability = self.ability.parent
-        return HeroAbility.objects.get(ability=parent_ability)
+    def get_parent_ability(self):
+        return self.ability.parent
