@@ -19,11 +19,13 @@ class TestStatisticsUpdateView(TestCase):
         self.client = Client()
         self.factory = RequestFactory()
         self.occupation = self.create_occupation()
-        self.hero = Hero.objects.create(
-            name='hero',
-            user=self.user,
-            occupation=self.occupation,
-        )
+        self.client.login(username='user', password='password')
+        response = self.client.post(reverse('hero:hero_create'), {
+            'name': 'hero',
+            'user': self.user,
+            'occupation': self.occupation
+        })
+        self.hero = Hero.objects.get(user=self.user)
 
         self.statistics = {
             'strength': 5,
@@ -41,12 +43,12 @@ class TestStatisticsUpdateView(TestCase):
             description=Occupation.WARRIOR_DESCRIPTION
         )
 
-    def create_statistics(self, points):
-        for point in points:
+    def create_statistics(self, **attributes):
+        for name, points in attributes.items():
             Statistic.objects.create(
-                name=Statistic.STRENGTH,
+                name=name,
                 hero=self.hero,
-                points=point,
+                points=points,
             )
 
     def test_response_code_is_200(self):
@@ -78,12 +80,17 @@ class TestStatisticsUpdateView(TestCase):
         self.client.post(self.url, self.statistics)
 
         for statistic in Statistic.objects.filter(hero=self.hero):
-            self.assertEqual(statistic.points, 10)
+            self.assertEqual(statistic.points, 5)
 
-    def test_invalid_are_sums_of_points_equal(self):
-        request = self.factory.get(self.url)
-        request.user = self.user
-        self.create_statistics([8, 9, 23])
-        view = StatisticsUpdateView()
-        view.request = request
-        response = view.are_sums_of_points_equal(self.statistics)
+    def test_valid_sets_new_statistc_points(self):
+        self.hero.statistic_points = 5
+        self.hero.save()
+        self.client.login(username='username', password='password')
+        response = self.client.post(self.url, {
+            'strength': 8,
+            'intelligence': 6,
+            'agility': 6,
+        })
+        self.hero = Hero.objects.get(pk=self.hero.pk)
+        self.assertEqual(self.hero.statistic_points, 0)
+
