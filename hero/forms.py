@@ -9,13 +9,13 @@ class HeroCreateForm(forms.Form):
 
 
 class StatisticsChangeForm(forms.Form):
-    strength = forms.IntegerField(min_value=1, initial=1)
-    agility = forms.IntegerField(min_value=1, initial=1)
-    intelligence = forms.IntegerField(min_value=1, initial=1)
-
+    def __init__(self, fields_names_and_min_values, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, min_value in fields_names_and_min_values.items():
+            self.fields[field_name] = forms.IntegerField(min_value=min_value, label=field_name)
 
 class AbilitiesChangeForm(forms.Form):
-    def __init__(self, fields_names, *args, **kwargs):
+    def __init__(self, fields_names_and_min_values, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name in fields_names:
-            self.fields[field_name] = forms.IntegerField(min_value=0, label=field_name)
+        for field_name, min_value in fields_names_and_min_values.items():
+            self.fields[field_name] = forms.IntegerField(min_value=min_value, label=field_name)
