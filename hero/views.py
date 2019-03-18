@@ -1,3 +1,4 @@
+import json
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
@@ -52,10 +53,9 @@ class HeroCreateView(FormView):
 
     def create_statistics(self, hero):
         """ If hero doesn't have created statistics. """
-        statistics = ['strength', 'intelligence', 'agility']
-        for name in statistics:
+        for name in Statistic.STATISTICS:
             Statistic.objects.create(
-                name=name,
+                name=name[0],
                 hero=hero,
             )
 
@@ -83,6 +83,17 @@ class StatisticsUpdateView(FormView):
         context['points'] = self.get_current_hero().statistic_points
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['fields_names_and_min_values'] = self.get_fields_names_and_min_values()
+        return kwargs
+
+    def get_fields_names_and_min_values(self):
+        fields_names_and_min_values = {}
+        for statistic in self.get_current_hero().statistic_set.all():
+            fields_names_and_min_values[statistic.name] = statistic.points
+        return fields_names_and_min_values
+
     def get_initial(self):
         initial = super().get_initial()
         for statistic in Statistic.objects.filter(hero=self.get_current_hero()):
@@ -105,11 +116,17 @@ class StatisticsUpdateView(FormView):
         all_hero_points = hero.sum_all_statistic_points()
         form_sum_statistics = self.sum_all_form_points(statistics)
 
-        if self.is_points_sum_invalid(all_hero_points, form_sum_statistics):
-            error = 'Amount of upgraded points is not correct.'
+        points_sum_invalid_error = self.is_points_sum_invalid(all_hero_points, form_sum_statistics)
+        lower_points_error = self.are_points_lower_than_they_were(form)
+        if points_sum_invalid_error or lower_points_error:
+            errors = []
+            if points_sum_invalid_error:
+                errors.append(points_sum_invalid_error)
+            if lower_points_error:
+                errors.append(lower_points_error)
             return render(self.request, self.template_name, {
                 'form': form,
-                'error': error,
+                'errors': errors,
             })
         self.set_new_hero_statistics_points(all_hero_points, form_sum_statistics)
         self.update_statistics(statistics)
@@ -127,7 +144,12 @@ class StatisticsUpdateView(FormView):
             free points should be same. 
             """
         if all_hero_points < form_sum_statistics:
-            return True
+            return 'Amount of upgraded points is not correct.'
+
+    def are_points_lower_than_they_were(self, form):
+        for hero_ability in self.get_current_hero().heroability_set.all():
+            if form.cleaned_datap[hero_ability.ability.name] < hero_ability.level:
+                return "You can't set your abilities level lower than they was."
     
     def set_new_hero_statistics_points(self, hero_points, form_points):
         hero = self.get_current_hero()
@@ -151,20 +173,20 @@ class AbilitiesUpdateView(FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({
-            'fields_names': self.get_fields_names()
+            'fields_names_and_min_values': self.get_fields_names_and_min_values()
         })
         return kwargs
     
-    def get_fields_names(self):
-        occupation_name = self.get_hero_occupation().name
-        abilities = Ability.objects.filter(occupation__name=occupation_name)
-        names = []
-        for ability in abilities:
-            names.append(ability.name)
-        return names
+    def get_fields_names_and_min_values(self):
+        hero = self.get_current_hero()
+        abilities = HeroAbility.objects.filter(hero=hero)
+        names_and_min_values = {}
+        for hero_ability in abilities:
+            names_and_min_values[hero_ability.ability.name] = hero_ability.level
+        return names_and_min_values
 
     def get_hero_occupation(self):
-        return Occupation.objects.get(pk=self.get_current_hero().occupation.pk)
+        return self.get_current_hero().occupation
 
     def get_initial(self):
         initial = super().get_initial()
@@ -175,24 +197,34 @@ class AbilitiesUpdateView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         abilities = serializers.serialize('json', self.get_hero_abilities())
-        context['points'] = self.get_current_hero().ability_points
+        context['points'] = json.dumps(self.get_current_hero().ability_points)
         context['abilities'] = abilities
         return context
 
     def form_valid(self, form):
-        if self.is_points_sum_invalid(form):
-            error = 'Amount of upgraded levels is not correct.'
+        lower_abilities_error = self.are_points_lower_than_they_were(form)
+        points_sum_invalid_error = self.is_points_sum_invalid(form)
+        if lower_abilities_error or points_sum_invalid_error:
+            errors = []
+            if lower_abilities_error:
+                errors.append(lower_abilities_error)
+            if points_sum_invalid_error:
+                errors.append(points_sum_invalid_error)
             return render(self.request, self.template_name, {
                 'form': form,
-                'error': error,
+                'errors': errors,
             })
         self.update_hero_abilities(form)
         return super().form_valid(form)
 
+    def are_points_lower_than_they_were(self, form):
+        for hero_ability in self.get_current_hero().heroability_set.all():
+            if form.cleaned_data[hero_ability.ability.name] < hero_ability.level:
+                return "You can't set your abilities level lower than they was."
+
     def is_points_sum_invalid(self, form):
         if self.sum_form_points(form) > self.get_current_hero().sum_all_ability_points():
-            return True
-        return False
+            return 'Amount of upgraded levels is not correct.'
     
     def sum_form_points(self, form):
         points_sum = 0
