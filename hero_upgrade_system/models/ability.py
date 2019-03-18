@@ -12,6 +12,7 @@ class Ability(models.Model):
     )
 
     name = models.CharField(max_length=35)
+    description = models.TextField()
     occupation = models.ForeignKey(Occupation, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     unblock_level = models.PositiveIntegerField()
