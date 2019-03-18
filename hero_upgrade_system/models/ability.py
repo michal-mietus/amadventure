@@ -36,9 +36,23 @@ class HeroAbility(models.Model):
 
     def is_blocked(self):
         """Parent level must be equal or bigger than unblock level."""
-        if self.parent.level >= self.ability.unblock_level:
-            return False
+        if self.parent:
+            if self.parent.level >= self.ability.unblock_level:
+                return False
         return True
 
     def get_parent_ability(self):
         return self.ability.parent
+
+    def get_all_descendants(self):
+        """Get all descendants of HeroAbility object. (childs of childs...)"""
+        descendants = []
+        childs = self.heroability_set.all()
+        for child in childs:
+            descendants.append(child)
+            child_descendants = child.get_all_descendants()
+            if child_descendants:
+                descendants.extend(child_descendants)
+        if descendants:
+            return descendants
+        return []
