@@ -124,3 +124,95 @@ class TestHeroAbility(TestCase):
 
         ability = hero_child_ability.get_parent_ability()
         self.assertEqual(ability, hero_parent_ability.ability)
+
+    def test_get_all_descendants(self):
+        core_ability = Ability.objects.create(
+            name='charge',
+            occupation=self.occupation,
+            parent=None,
+            unblock_level=0,
+            category=Ability.ACTIVE,
+            function='charge',
+        )
+
+        child_ability = Ability.objects.create(
+            name='super_charge',
+            occupation=self.occupation,
+            parent=core_ability,
+            unblock_level=3,
+            category=Ability.ACTIVE,
+            function='super_charge',
+        )
+
+        second_child_ability = Ability.objects.create(
+            name='super_charge_v2',
+            occupation=self.occupation,
+            parent=core_ability,
+            unblock_level=3,
+            category=Ability.ACTIVE,
+            function='super_charge_v2',
+        )
+
+        child_of_child_ability = Ability.objects.create(
+            name='extra_charge',
+            occupation=self.occupation,
+            parent=child_ability,
+            unblock_level=3,
+            category=Ability.ACTIVE,
+            function='extra_charge',
+        )
+
+        second_child_of_child_ability = Ability.objects.create(
+            name='second_extra_charge',
+            occupation=self.occupation,
+            parent=child_ability,
+            unblock_level=3,
+            category=Ability.ACTIVE,
+            function='second_extra_charge',
+        )
+
+        hero_core_ability = HeroAbility.objects.create(
+            hero=self.hero,
+            level=1,
+            ability=core_ability,
+            parent=None
+        )
+
+        hero_child_ability = HeroAbility.objects.create(
+            hero=self.hero,
+            level=0,
+            ability=child_ability,
+            parent=hero_core_ability
+        )
+
+        hero_second_child_ability = HeroAbility.objects.create(
+            hero=self.hero,
+            level=0,
+            ability=second_child_ability,
+            parent=hero_core_ability
+        )
+
+        hero_child_of_child_ability = HeroAbility.objects.create(
+            hero=self.hero,
+            level=0,
+            ability=child_of_child_ability,
+            parent=hero_child_ability
+        )
+
+        hero_second_child_of_child_ability = HeroAbility.objects.create(
+            hero=self.hero,
+            level=0,
+            ability=second_child_of_child_ability,
+            parent=hero_child_ability
+        )
+
+        core_descendants = [
+            hero_child_ability,
+            hero_second_child_ability,
+            hero_child_of_child_ability,
+            hero_second_child_of_child_ability,
+        ]
+
+        core_descendants.sort(key=lambda x: x.ability.name)
+        hero_descendants = hero_core_ability.get_all_descendants()
+        self.assertEqual(core_descendants, sorted(hero_descendants, key=lambda x: x.ability.name))
