@@ -2,7 +2,13 @@ Points to use {{ points }}
 
 <form method="POST" action="{% url 'hero:abilities_update' %}">
     {% csrf_token %}
-    {{ error }}
+    {% for error in errors %}
+        {{ error }}
+    {% endfor %}
     {{ form }}
     <input type="submit" value="Update abilities">
 </form>
+
+<script>
+    var jsonObject = JSON.parse('{{ abilities | escapejs }}');
+</script>
