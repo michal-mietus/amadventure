@@ -94,3 +94,16 @@ class TestStatisticsUpdateView(TestCase):
         self.hero = Hero.objects.get(pk=self.hero.pk)
         self.assertEqual(self.hero.statistic_points, 0)
 
+    def test_dont_allow_user_to_decrease_statistics(self):
+        self.client.login(username='username', password='password')
+        response = self.client.post(self.url, {
+            'strength': 8,
+            'intelligence': 6,
+            'agility': 6,
+        })
+        decreasing_response = self.client.post(self.url, {
+            'strength': 4,
+            'intelligence': 2,
+            'agility': 2,
+        })
+
