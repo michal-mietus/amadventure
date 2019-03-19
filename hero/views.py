@@ -43,13 +43,26 @@ class HeroCreateView(FormView):
 
     def create_new_hero_abilities(self, hero):
         """Callled when user is creating hero. """
-        for ability in Ability.objects.filter(occupation=hero.occupation):
-            parent_ability = self.if_have_parent_return(ability, hero)
+        self.create_core_abilities(hero)
+        self.create_descendant_abilities(hero)
+
+    def create_core_abilities(self, hero):
+        for ability in hero.occupation.get_core_abilities():
             HeroAbility.objects.create(
                 hero=hero,
                 ability=ability,
-                parent=parent_ability,
+                parent=None,
             )
+
+    def create_descendant_abilities(self, hero):
+        for ability in hero.occupation.get_descendant_abilities():
+            parent = HeroAbility.objects.get(ability=ability.parent)
+            HeroAbility.objects.create(
+                hero=hero,
+                ability=ability,
+                parent=parent,
+            )
+
 
     def create_statistics(self, hero):
         """ If hero doesn't have created statistics. """
@@ -147,9 +160,9 @@ class StatisticsUpdateView(FormView):
             return 'Amount of upgraded points is not correct.'
 
     def are_points_lower_than_they_were(self, form):
-        for hero_ability in self.get_current_hero().heroability_set.all():
-            if form.cleaned_datap[hero_ability.ability.name] < hero_ability.level:
-                return "You can't set your abilities level lower than they was."
+        for hero_statistic in self.get_current_hero().statistic_set.all():
+            if form.cleaned_data[hero_statistic.name] < hero_statistic.points:
+                return "You can't set your statistic points lower than they was."
     
     def set_new_hero_statistics_points(self, hero_points, form_points):
         hero = self.get_current_hero()
@@ -196,10 +209,44 @@ class AbilitiesUpdateView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        abilities = serializers.serialize('json', self.get_hero_abilities())
+        abilities = self.get_all_required_ability_data()
         context['points'] = json.dumps(self.get_current_hero().ability_points)
-        context['abilities'] = abilities
+        context['abilities'] = json.dumps(abilities)
         return context
+    
+    def get_abilities_grouped_by_core_abilities(self):
+        try:
+            random_ability = self.get_current_hero().heroability_set.all()[0]
+        except Exception as e:
+            print('No abilities set.')
+        grouped_abilities = []
+        core_abilities = random_ability.get_core_abilities()
+        for core_ability in core_abilities:
+            ability_branch = [core_ability]
+            ability_branch.extend(core_ability.get_all_descendants())
+            grouped_abilities.append(ability_branch)
+        return grouped_abilities
+
+    def get_all_required_ability_data(self):
+        grouped_abilities = self.get_abilities_grouped_by_core_abilities()
+        abilities_data_to_send = []
+        for branch in grouped_abilities:
+            serialized_branch = []
+            for ability in branch:
+                ability_object = {
+                    'level': ability.level,
+                    'name': ability.ability.name,
+                    'description': ability.ability.description,
+                    'unblock_level': ability.ability.unblock_level,
+                }
+                parent = ability.parent
+                if parent:
+                    ability_object.update(parent=parent.ability.name)
+                else:
+                    ability_object.update(parent=None)
+                serialized_branch.append(ability_object)
+            abilities_data_to_send.append(serialized_branch)
+        return abilities_data_to_send
 
     def form_valid(self, form):
         lower_abilities_error = self.are_points_lower_than_they_were(form)

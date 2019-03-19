@@ -1,0 +1,14 @@
+#field-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.branch {
+    display: flex;
+    flex-direction: column;
+}
+
+.ability-field, .points {
+    border: 1px #ccc solid;
+    padding: 10px;
+}

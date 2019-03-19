@@ -1,14 +1,33 @@
-Points to use {{ points }}
+{% load static %}
+
+<head>
+    <link rel="stylesheet" href="{% static '/hero/css/abilitiesUpdate.css' %}">
+</head>
+
+<div class="points">
+    Points to use {{ points }}
+</div>
 
 <form method="POST" action="{% url 'hero:abilities_update' %}">
     {% csrf_token %}
+    {{ form.non_field_errors }}
     {% for error in errors %}
         {{ error }}
     {% endfor %}
-    {{ form }}
+    <div id="field-container">
+        {% for field in form.visible_fields %}
+            <div class="ability-field" id="{{ field.name }}">
+                {{ field.label_tag }}
+                {{ field.errors }}
+                {{ field }}
+                {{ field.help_text }}
+            </div>
+        {% endfor %}
+    </div>
     <input type="submit" value="Update abilities">
 </form>
 
 <script>
-    var jsonObject = JSON.parse('{{ abilities | escapejs }}');
+    var abilities = JSON.parse('{{ abilities | escapejs }}');
 </script>
+<script src="{% static '/hero/js/abilitiesUpdate.js' %}"></script>

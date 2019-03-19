@@ -12,6 +12,7 @@ class Ability(models.Model):
     )
 
     name = models.CharField(max_length=35)
+    description = models.TextField()
     occupation = models.ForeignKey(Occupation, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     unblock_level = models.PositiveIntegerField()
@@ -56,3 +57,12 @@ class HeroAbility(models.Model):
         if descendants:
             return descendants
         return []
+
+    def get_core_abilities(self):
+        core_abilities = []
+        for hero_ability in HeroAbility.objects.filter(hero=self.hero):
+            if hero_ability.parent == None:
+                print(hero_ability)
+                core_abilities.append(hero_ability)
+        return core_abilities
+

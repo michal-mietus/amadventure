@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase
 from django.urls import reverse
 from django.core import serializers
@@ -34,11 +35,31 @@ class TestAbilitiesUpdateView(TestCase):
         return Ability.objects.filter(occupation=self.hero.occupation)
 
     def test_context(self):
+        ability = Ability.objects.create(
+            name='pull',
+            description='desc',
+            occupation=self.occupation,
+            parent=None,
+            unblock_level=0,
+            category=Ability.PASSIVE,
+            function='',
+        )
+        hero_ability = HeroAbility.objects.create(
+            ability=ability,
+            hero=self.hero,
+            parent=None,
+        )
         self.client.login(username='username', password='password')
         response = self.client.get(self.url)
-        hero_abilities = HeroAbility.objects.filter(hero=self.hero)
-        context = serializers.serialize('json', hero_abilities)
-        self.assertEqual(response.context['abilities'], context)
+        ability_object = {
+            "level": hero_ability.level,
+            "name": hero_ability.ability.name,
+            "description": hero_ability.ability.description,
+            "unblock_level": hero_ability.ability.unblock_level,
+            "parent": hero_ability.parent
+        }
+        context = json.loads(response.context['abilities'])
+        self.assertEqual(context, [[ability_object]])
 
     def test_valid_form(self):
         self.create_and_login_user()
