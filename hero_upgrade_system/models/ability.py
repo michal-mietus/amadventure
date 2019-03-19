@@ -57,3 +57,12 @@ class HeroAbility(models.Model):
         if descendants:
             return descendants
         return []
+
+    def get_core_abilities(self):
+        core_abilities = []
+        for hero_ability in HeroAbility.objects.filter(hero=self.hero):
+            if hero_ability.parent == None:
+                print(hero_ability)
+                core_abilities.append(hero_ability)
+        return core_abilities
+
