@@ -48,3 +48,17 @@ class Occupation(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_core_abilities(self):
+        core_abilities = []
+        for ability in self.ability_set.all():
+            if ability.parent == None:
+                core_abilities.append(ability)
+        return core_abilities
+
+    def get_descendant_abilities(self):
+        descendant_abilities = []
+        for ability in self.ability_set.all():
+            if ability.parent != None:
+                descendant_abilities.append(ability)
+        return descendant_abilities
