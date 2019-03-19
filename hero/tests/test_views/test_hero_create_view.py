@@ -54,3 +54,22 @@ class TestCreateHeroView(TestCase):
         })
         hero = Hero.objects.get(user=self.user)
         self.assertEqual(len(hero.heroability_set.all()), len(Ability.objects.all()))
+
+    def test_create_descendant_abilities(self):
+        occupation = Occupation.objects.get(
+            name=Occupation.WARRIOR
+        )
+        hero = Hero.objects.create(
+            user=self.user,
+            name='hero',
+            occupation=occupation,
+        )
+        view = HeroCreateView()
+        view.create_descendant_abilities(hero)
+
+    def test_create_hero_post_data(self):
+        self.client.login(username='user', password='password')
+        response = self.client.post(self.url, {
+            'name': 'hero',
+            'occupation': Occupation.WARRIOR
+        })
