@@ -215,7 +215,10 @@ class AbilitiesUpdateView(FormView):
         return context
     
     def get_abilities_grouped_by_core_abilities(self):
-        random_ability = self.get_current_hero().heroability_set.all()[0]
+        try:
+            random_ability = self.get_current_hero().heroability_set.all()[0]
+        except Exception as e:
+            print('No abilities set.')
         grouped_abilities = []
         core_abilities = random_ability.get_core_abilities()
         for core_ability in core_abilities:
