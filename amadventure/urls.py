@@ -17,9 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from hero import urls as hero_urls
 from user import urls as user_urls
+from hero_api import urls as hero_api_urls
+from auth_api import urls as auth_api_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hero/', include(hero_urls)),
     path('user/', include(user_urls)),
+    path('api/hero/', include(hero_api_urls)),
+    path('api/auth/', include(auth_api_urls)),
 ]
