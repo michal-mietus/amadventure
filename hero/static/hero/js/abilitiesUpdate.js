@@ -31,7 +31,7 @@ function moveAbilitiesToSeparateBranchDivs(abilities){
 function createNodesAndTrees(abilities){
     trees = [];
     for(var branch=0; branch<abilities.length; branch++){
-        let branchTree = new AbilitiesTree();
+        let branchTree = new AbilitiesTree(branch);
         for (var ability=0; ability<abilities[branch].length; ability++){
             if (abilities[branch][ability].parent == null){
                 node = new Node(abilities[branch][ability]);
@@ -58,9 +58,10 @@ class Node {
 };
 
 class AbilitiesTree {
-    constructor(){
+    constructor(branch){
         this.root = null;
         this.nodes = [];
+        this.branch = branch;
     };
 
     setRoot(node){
@@ -102,6 +103,17 @@ class AbilitiesTree {
                 parent.addChild(this.nodes[i]);
             };
         };
+    };
+
+    createDivAndMoveChilds(node){
+        branch_element = document.getElementsByClassName(this.branch)[0];
+        div = document.createElement('div');
+        child_elements = []
+        for(var i=0; i<node.childs.length; i++){
+            child_field = document.getElementById(node.childs[i].ability.name);
+            child_elements.push(child_field);
+        };
+        // create container for childs and move them there.
     };
 };
 
