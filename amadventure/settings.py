@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'user',
     'hero',
+    'hero_api',
     'hero_upgrade_system',
 ]
 
@@ -130,3 +133,9 @@ STATICFILES_DIRS = [
 LOGIN_URL = reverse_lazy('user:sign_in')
 LOGIN_REDIRECT_URL = reverse_lazy('user:sign_in')
 LOGOUT_REDIRECT_URL = reverse_lazy('user:sign_in')
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+       'rest_framework.authentication.TokenAuthentication',
+    ],
+}
