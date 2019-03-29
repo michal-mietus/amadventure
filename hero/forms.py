@@ -8,7 +8,7 @@ class HeroCreateForm(forms.Form):
     occupation = forms.ChoiceField(choices=Occupation.OCCUPATIONS)
 
 
-class StatisticsChangeForm(forms.Form):
+class HeroStatisticsChangeForm(forms.Form):
     def __init__(self, fields_names_and_min_values, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, min_value in fields_names_and_min_values.items():

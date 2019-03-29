@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from hero.models.hero import Hero
-from hero.models.ability import Ability, HeroAbility
+from hero.models.ability import Ability
+from hero.models.hero import HeroAbility
 from hero.models.occupation import Occupation
 from hero.models.occupations import warrior
 

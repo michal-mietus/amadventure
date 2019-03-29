@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from hero.models.hero import Hero
-from hero.models.statistic import Statistic
-from hero.models.ability import Ability, HeroAbility
+from hero.models.hero import Hero, HeroStatistic
+from hero.models.ability import Ability
+from hero.models.hero import HeroAbility
 from hero.models.occupation import Occupation
 
 
@@ -32,9 +32,9 @@ class AbilitySerializer(serializers.ModelSerializer):
             'parent', 'unblock_level', 'category',
         )
 
-class StatisticSerializer(serializers.ModelSerializer):
+class HeroStatisticSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Statistic
+        model = HeroStatistic
         fields = ('id', 'name', 'points')
 
 

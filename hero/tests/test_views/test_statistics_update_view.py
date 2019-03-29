@@ -2,12 +2,11 @@ from django.test import TestCase, Client, RequestFactory
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy, reverse
 from hero.models.occupation import Occupation
-from hero.models.hero import Hero
-from hero.models.statistic import Statistic
-from ...views import StatisticsUpdateView
+from hero.models.hero import Hero, HeroStatistic
+from ...views import HeroStatisticsUpdateView
 
 
-class TestStatisticsUpdateView(TestCase):
+class TestHeroStatisticsUpdateView(TestCase):
     url = reverse_lazy('hero:statistics_update')
     
     def setUp(self):
@@ -34,7 +33,7 @@ class TestStatisticsUpdateView(TestCase):
         }
 
         self.client.login(username='user', password='password')
-        self.view = StatisticsUpdateView()
+        self.view = HeroStatisticsUpdateView()
     
     def create_occupation(self):
         return Occupation.objects.create(
@@ -45,7 +44,7 @@ class TestStatisticsUpdateView(TestCase):
 
     def create_statistics(self, **attributes):
         for name, points in attributes.items():
-            Statistic.objects.create(
+            HeroStatistic.objects.create(
                 name=name,
                 hero=self.hero,
                 points=points,
@@ -71,7 +70,7 @@ class TestStatisticsUpdateView(TestCase):
     def test_valid_newly_created_statistics(self):
         self.client.post(self.url, self.statistics)
         for name, points in self.statistics.items():
-            statistic = Statistic.objects.get(hero=self.hero, name=name)
+            statistic = HeroStatistic.objects.get(hero=self.hero, name=name)
             self.assertEqual(statistic.points, points)
 
     def test_valid_updated_statistics(self):
@@ -79,7 +78,7 @@ class TestStatisticsUpdateView(TestCase):
         self.hero.statistic_points = 15
         self.client.post(self.url, self.statistics)
 
-        for statistic in Statistic.objects.filter(hero=self.hero):
+        for statistic in HeroStatistic.objects.filter(hero=self.hero):
             self.assertEqual(statistic.points, 5)
 
     def test_valid_sets_new_statistc_points(self):

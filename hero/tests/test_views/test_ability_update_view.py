@@ -5,8 +5,8 @@ from django.core import serializers
 from django.core.management import call_command
 from django.contrib.auth.models import User
 from hero.models.occupation import Occupation
-from hero.models.statistic import Statistic
-from hero.models.ability import Ability, HeroAbility
+from hero.models.ability import Ability
+from hero.models.hero import HeroAbility, HeroStatistic
 from hero.management.commands.create_abilities import Command as CreateAbilities
 from hero.management.commands.create_occupations import Command as CreateOccupations
 from hero.views import AbilitiesUpdateView
@@ -29,7 +29,7 @@ class TestAbilitiesUpdateView(TestCase):
             'agility': 5,
         }
         for name, points in statistics.items():
-            Statistic.objects.create(name=name, points=points, hero=self.hero)
+            HeroStatistic.objects.create(name=name, points=points, hero=self.hero)
 
     def abilities_which_can_choose_hero(self):
         return Ability.objects.filter(occupation=self.hero.occupation)
