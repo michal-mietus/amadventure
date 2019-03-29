@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'user',
     'hero',
     'hero_api',
-    'hero_upgrade_system',
 ]
 
 MIDDLEWARE = [
