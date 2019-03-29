@@ -1,5 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from hero_api import serializers
 from hero.models.hero import Hero
 from hero_upgrade_system.models.statistics import Statistic
@@ -18,6 +20,12 @@ class HeroAbilityViewSet(viewsets.ModelViewSet):
     queryset = HeroAbility.objects.all()
     serializer_class = serializers.HeroAbilitySerializer
 
+    def list(self, request, *args, **kwargs):
+        hero = get_object_or_404(Hero, pk=kwargs['hero_pk'])
+        queryset = hero.heroability_set.all()
+        serializer = serializers.HeroAbilitySerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class AbilityViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
@@ -30,9 +38,14 @@ class StatisticViewSet(viewsets.ModelViewSet):
     queryset = Statistic.objects.all()
     serializer_class = serializers.StatisticSerializer
 
+    def list(self, request, *args, **kwargs):
+        hero = get_object_or_404(Hero, pk=kwargs['hero_pk'])
+        queryset = hero.statistic_set.all()
+        serializer = serializers.StatisticSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class OccupationViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = Occupation.objects.all()
     serializer_class = serializers.OccupationSerializer
-
