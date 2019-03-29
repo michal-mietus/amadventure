@@ -35,49 +35,8 @@ class HeroCreateView(FormView):
             occupation=occupation,
         )
 
-        self.create_new_hero_abilities(hero)
-        self.create_statistics(hero)
-
+        hero.create_initial_derivatives()
         return super().form_valid(form)
-
-    def create_new_hero_abilities(self, hero):
-        """Callled when user is creating hero. """
-        self.create_core_abilities(hero)
-        self.create_descendant_abilities(hero)
-
-    def create_core_abilities(self, hero):
-        for ability in hero.occupation.get_core_abilities():
-            HeroAbility.objects.create(
-                hero=hero,
-                ability=ability,
-                parent=None,
-            )
-
-    def create_descendant_abilities(self, hero):
-        for ability in hero.occupation.get_descendant_abilities():
-            parent = HeroAbility.objects.get(ability=ability.parent)
-            HeroAbility.objects.create(
-                hero=hero,
-                ability=ability,
-                parent=parent,
-            )
-
-
-    def create_statistics(self, hero):
-        """ If hero doesn't have created statistics. """
-        for name in HeroStatistic.STATISTICS:
-            HeroStatistic.objects.create(
-                name=name[0],
-                hero=hero,
-            )
-
-    def if_have_parent_return(self, ability, hero):
-        if ability.parent is not None:
-            self.get_hero_ability_parent(ability, hero)
-        return None
-
-    def get_hero_ability_parent(self, ability, hero):
-        return HeroAbility.objects.filter(ability__name=ability.parent.name, hero=hero)
 
     def get_current_user(self):
         return User.objects.get(pk=self.request.user.pk)
@@ -119,60 +78,29 @@ class HeroStatisticsUpdateView(FormView):
         return User.objects.get(pk=self.request.user.pk)
 
     def form_valid(self, form):
-        statistics = {
-            'strength': form.cleaned_data['strength'],
-            'intelligence': form.cleaned_data['intelligence'],
-            'agility': form.cleaned_data['agility'],
-        }
         hero = self.get_current_hero()
-        all_hero_points = hero.sum_all_statistic_points()
-        form_sum_statistics = self.sum_all_form_points(statistics)
-
-        points_sum_invalid_error = self.is_points_sum_invalid(all_hero_points, form_sum_statistics)
-        lower_points_error = self.are_points_lower_than_they_were(form)
-        if points_sum_invalid_error or lower_points_error:
-            errors = []
-            if points_sum_invalid_error:
-                errors.append(points_sum_invalid_error)
-            if lower_points_error:
-                errors.append(lower_points_error)
+        errors = self.get_errors(form)
+        if errors:
             return render(self.request, self.template_name, {
                 'form': form,
                 'errors': errors,
             })
-        self.set_new_hero_statistics_points(all_hero_points, form_sum_statistics)
-        self.update_statistics(statistics)
 
+        hero.update_statistics(form)
         return super().form_valid(form)
 
-    def sum_all_form_points(self, statistics):
-        form_points_sum = 0
-        for points in statistics.values():
-            form_points_sum += points
-        return form_points_sum
-
-    def is_points_sum_invalid(self, all_hero_points, form_sum_statistics):
-        """ Sum of points already assigned to statistics and 
-            free points should be same. 
-            """
-        if all_hero_points < form_sum_statistics:
-            return 'Amount of upgraded points is not correct.'
+    def get_errors(self, form):
+        # create list of validators and iterate through them,
+        # dont call every validator separately
+        errors = []
+        if self.are_points_lower_than_they_were(form):
+            errors.append(self.are_points_lower_than_they_were(form))
+        return errors
 
     def are_points_lower_than_they_were(self, form):
         for hero_statistic in self.get_current_hero().herostatistic_set.all():
             if form.cleaned_data[hero_statistic.name] < hero_statistic.points:
-                return "You can't set your statistic points lower than they was."
-    
-    def set_new_hero_statistics_points(self, hero_points, form_points):
-        hero = self.get_current_hero()
-        hero.statistic_points = hero_points - form_points
-        hero.save()
-
-    def update_statistics(self, statistics):
-        for name, points in statistics.items():
-            statistic = HeroStatistic.objects.get(hero=self.get_current_hero(), name=name)
-            statistic.points = points
-            statistic.save()
+                return "You can't set your statistic points lower than it was."
 
 
 # TODO Hero required or redirect to create hero

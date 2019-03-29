@@ -15,6 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print('Creating abilitites...')
         self.create_all_abilities()
+        print('Abilities created.\n')
 
     def create_all_abilities(self):
         for occupation_pair in self.OCCUPATIONS:

@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from hero.models.occupation import Occupation
 from hero.models.ability import Ability
 
@@ -44,6 +42,73 @@ class Hero(models.Model):
         for ability in self.heroability_set.all():
             points_sum += ability.level
         return points_sum
+
+    def create_initial_derivatives(self):
+        """
+            Method to call all methods which have to be initialized
+            when hero is first time created.
+        """
+        self.create_initial_statistics()
+        self.create_initial_core_abilities()
+        self.create_initial_descendant_abilities()
+
+    def create_initial_statistics(self):
+        for statistic in HeroStatistic.STATISTICS:
+            HeroStatistic.objects.create(
+                name=statistic[0],
+                hero=self,
+            )
+
+    def create_initial_core_abilities(self):
+        for ability in self.occupation.get_core_abilities():
+            HeroAbility.objects.create(
+                hero=self,
+                ability=ability,
+                parent=None,
+            )
+
+    def create_initial_descendant_abilities(self):
+        for ability in self.occupation.get_descendant_abilities():
+            parent_hero_ability = HeroAbility.objects.get(ability=ability.parent)
+            HeroAbility.objects.create(
+                hero=self,
+                ability=ability,
+                parent=parent_hero_ability,
+            )
+
+    def update_statistics(self, statistics_form):
+        if self.is_form_valid(statistics_form):
+            self.update_statistic_points(statistics_form)
+            for statistic_name, statistic_points in statistics_form.cleaned_data.items():
+                hero_statistic = self.herostatistic_set.get(name=statistic_name)
+                hero_statistic.points = statistic_points
+                hero_statistic.save()
+
+    def is_form_valid(self, statistics_form):
+        if self.get_hero_statistics_free_points(statistics_form) >= 0:
+            return True
+        return False 
+
+    def sum_statistics_points(self):
+        points_sum = 0
+        for statistic in self.herostatistic_set.all():
+            points_sum += statistic.points
+        return points_sum
+
+    def sum_statistic_form_points(self, statistics_form):
+        points_sum = 0
+        for statistic_name, statistic_points in statistics_form.cleaned_data.items():
+            points_sum += statistic_points
+        return points_sum
+
+    def get_hero_statistics_free_points(self, statistics_form):
+        free_statistics_points = self.sum_all_statistic_points() - self.sum_statistic_form_points(statistics_form)
+        return free_statistics_points
+
+    def update_statistic_points(self, statistics_form):
+        self.statistic_points = self.get_hero_statistics_free_points(statistics_form)
+        self.save()
+
 
 
 class HeroAbility(models.Model):

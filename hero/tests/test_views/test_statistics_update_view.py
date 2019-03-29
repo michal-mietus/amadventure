@@ -63,10 +63,6 @@ class TestHeroStatisticsUpdateView(TestCase):
         points = self.hero.statistic_points
         self.assertEqual(response.context['points'], points)
 
-    def test_sum_of_points(self):
-        points_sum = self.view.sum_all_form_points(self.statistics)
-        self.assertEqual(points_sum, 15)
-
     def test_valid_newly_created_statistics(self):
         self.client.post(self.url, self.statistics)
         for name, points in self.statistics.items():
