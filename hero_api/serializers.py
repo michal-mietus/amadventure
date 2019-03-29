@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from hero.models.hero import Hero
 from hero.models.statistic import Statistic
-from hero_upgrade_system.models.ability import Ability, HeroAbility
+from hero.models.ability import Ability, HeroAbility
 from hero.models.occupation import Occupation
 
 

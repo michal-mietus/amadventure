@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ...models.ability import Ability
+from hero.models.ability import Ability
 from hero.models.occupation import Occupation
 from ...models import occupations
 

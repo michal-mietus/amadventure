@@ -1,6 +1,6 @@
 from django.contrib import admin
 from hero.models.occupation import Occupation
-from .models.ability import Ability, HeroAbility
+from hero.models.ability import Ability, HeroAbility
 from hero.models.statistic import Statistic
 
 
