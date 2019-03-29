@@ -65,7 +65,6 @@ class TestCreateHeroView(TestCase):
             occupation=occupation,
         )
         view = HeroCreateView()
-        view.create_descendant_abilities(hero)
 
     def test_create_hero_post_data(self):
         self.client.login(username='user', password='password')
