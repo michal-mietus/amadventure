@@ -2,10 +2,10 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from hero.models.hero import Hero
 from hero.models.occupation import Occupation
-from hero.models.statistic import Statistic
+from hero.models.hero import HeroStatistic
 
 
-class TestStatistic(TestCase):
+class TestHeroStatistic(TestCase):
 
     def create_user(self, username):
         return User.objects.create(
@@ -27,8 +27,8 @@ class TestStatistic(TestCase):
         )
 
     def test_create_statistic_object(self):
-        Statistic.objects.create(
-            name=Statistic.STRENGTH,
+        HeroStatistic.objects.create(
+            name=HeroStatistic.STRENGTH,
             points=1,
             hero=self.create_hero()
         )

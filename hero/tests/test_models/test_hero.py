@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .set_ups import UserAndHeroSetUp
-from hero.models.statistic import Statistic
+from hero.models.hero import HeroStatistic
 from ...models.hero import Hero
 
 
@@ -14,7 +14,7 @@ class TestHero(UserAndHeroSetUp):
         self.assertEqual(str(self.hero), 'Hero ' + self.hero_name)
 
     def test_get_all_stats(self):
-        self.assertQuerysetEqual(self.hero.get_all_stats(), self.hero.statistic_set.all())
+        self.assertQuerysetEqual(self.hero.get_all_stats(), self.hero.herostatistic_set.all())
 
     def test_upgrade_statistics(self):
         statistics = {
@@ -26,11 +26,11 @@ class TestHero(UserAndHeroSetUp):
         self.hero.upgrade_statistics(**statistics)
 
         for name, points in statistics.items():
-            self.assertEqual(points*2, self.hero.statistic_set.get(name=name).points)
+            self.assertEqual(points*2, self.hero.herostatistic_set.get(name=name).points)
 
     def create_hero_statistics(self, statistics):
         for name, points in statistics.items():
-            Statistic.objects.create(
+            HeroStatistic.objects.create(
                 name=name, 
                 points=points,
                 hero=self.hero

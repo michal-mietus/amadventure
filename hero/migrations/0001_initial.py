@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Statistic',
+            name='HeroStatistic',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(choices=[('strength', 'strength'), ('agility', 'agility'), ('intelligence', 'intelligence')], max_length=35)),

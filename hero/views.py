@@ -8,13 +8,12 @@ from django import forms
 from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.core import serializers
-from hero.models import occupations
-from hero.models.occupation import Occupation
-from hero.models.statistic import Statistic
-from hero.models.ability import Ability, HeroAbility
+from .models import occupations
+from .models.occupation import Occupation
+from .models.ability import Ability
+from .models.hero import Hero, HeroAbility, HeroStatistic
 from .decorators import deny_access_user_with_hero, hero_required
-from .models.hero import Hero
-from .forms import HeroCreateForm, StatisticsChangeForm, AbilitiesChangeForm
+from .forms import HeroCreateForm, HeroStatisticsChangeForm, AbilitiesChangeForm
 
 
 class MainView(TemplateView):
@@ -66,8 +65,8 @@ class HeroCreateView(FormView):
 
     def create_statistics(self, hero):
         """ If hero doesn't have created statistics. """
-        for name in Statistic.STATISTICS:
-            Statistic.objects.create(
+        for name in HeroStatistic.STATISTICS:
+            HeroStatistic.objects.create(
                 name=name[0],
                 hero=hero,
             )
@@ -86,8 +85,8 @@ class HeroCreateView(FormView):
 
 # TODO Hero required or redirect to create hero
 @method_decorator([login_required, hero_required], name='dispatch')
-class StatisticsUpdateView(FormView):
-    form_class = StatisticsChangeForm
+class HeroStatisticsUpdateView(FormView):
+    form_class = HeroStatisticsChangeForm
     template_name = 'hero/statistics_update.html'
     success_url = reverse_lazy('hero:abilities_update')
 
@@ -103,13 +102,13 @@ class StatisticsUpdateView(FormView):
 
     def get_fields_names_and_min_values(self):
         fields_names_and_min_values = {}
-        for statistic in self.get_current_hero().statistic_set.all():
+        for statistic in self.get_current_hero().herostatistic_set.all():
             fields_names_and_min_values[statistic.name] = statistic.points
         return fields_names_and_min_values
 
     def get_initial(self):
         initial = super().get_initial()
-        for statistic in Statistic.objects.filter(hero=self.get_current_hero()):
+        for statistic in HeroStatistic.objects.filter(hero=self.get_current_hero()):
             initial[statistic.name] = statistic.points
         return initial
 
@@ -160,7 +159,7 @@ class StatisticsUpdateView(FormView):
             return 'Amount of upgraded points is not correct.'
 
     def are_points_lower_than_they_were(self, form):
-        for hero_statistic in self.get_current_hero().statistic_set.all():
+        for hero_statistic in self.get_current_hero().herostatistic_set.all():
             if form.cleaned_data[hero_statistic.name] < hero_statistic.points:
                 return "You can't set your statistic points lower than they was."
     
@@ -171,7 +170,7 @@ class StatisticsUpdateView(FormView):
 
     def update_statistics(self, statistics):
         for name, points in statistics.items():
-            statistic = Statistic.objects.get(hero=self.get_current_hero(), name=name)
+            statistic = HeroStatistic.objects.get(hero=self.get_current_hero(), name=name)
             statistic.points = points
             statistic.save()
 
