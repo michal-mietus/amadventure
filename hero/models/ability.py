@@ -1,6 +1,6 @@
 from django.db import models
 from hero.models.hero import Hero
-from .occupation import Occupation
+from hero.models.occupation import Occupation
 
 
 class Ability(models.Model):

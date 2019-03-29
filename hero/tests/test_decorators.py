@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.shortcuts import reverse
 from django.contrib.auth.models import User
 from ..decorators import deny_access_user_with_hero, hero_required
-from hero_upgrade_system.models.occupation import Occupation
+from hero.models.occupation import Occupation
 from ..models.hero import Hero
 
 

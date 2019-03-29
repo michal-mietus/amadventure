@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from hero_upgrade_system.models.occupation import Occupation
+from hero.models.occupation import Occupation
 
 
 class Hero(models.Model):

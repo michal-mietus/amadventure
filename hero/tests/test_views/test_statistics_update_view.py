@@ -1,7 +1,7 @@
 from django.test import TestCase, Client, RequestFactory
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy, reverse
-from hero_upgrade_system.models.occupation import Occupation
+from hero.models.occupation import Occupation
 from hero.models.hero import Hero
 from hero.models.statistic import Statistic
 from ...views import StatisticsUpdateView

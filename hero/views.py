@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.core import serializers
 from hero_upgrade_system.models import occupations
-from hero_upgrade_system.models.occupation import Occupation
+from hero.models.occupation import Occupation
 from hero.models.statistic import Statistic
 from hero_upgrade_system.models.ability import Ability, HeroAbility
 from .decorators import deny_access_user_with_hero, hero_required

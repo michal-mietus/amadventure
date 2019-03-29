@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models.occupation import Occupation
+from hero.models.occupation import Occupation
 from .models.ability import Ability, HeroAbility
 from hero.models.statistic import Statistic
 

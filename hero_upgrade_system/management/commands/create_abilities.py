@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from hero_upgrade_system.models.ability import Ability
-from hero_upgrade_system.models.occupation import Occupation
+from hero.models.occupation import Occupation
 from hero_upgrade_system.models import occupations
 
 
