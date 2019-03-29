@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from hero.models.hero import Hero
-from ...models.occupation import Occupation
-from ...models.statistics import Statistic
+from hero.models.occupation import Occupation
+from hero.models.statistic import Statistic
 
 
 class TestStatistic(TestCase):

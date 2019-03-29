@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ...models.occupation import Occupation
+from hero.models.occupation import Occupation
 
 
 class TestOccupation(TestCase):

@@ -1,7 +1,7 @@
 from django.test import TestCase
-from ...models.ability import Ability
-from ...models.occupation import Occupation
-from ...models import occupations
+from hero.models.ability import Ability
+from hero.models.occupation import Occupation
+from hero.models import occupations
 
 
 class TestAbility(TestCase):

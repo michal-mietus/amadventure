@@ -1,6 +1,6 @@
 from django import forms
-from hero_upgrade_system.models.occupation import Occupation
-from hero_upgrade_system.models.ability import Ability
+from hero.models.occupation import Occupation
+from hero.models.ability import Ability
 
 
 class HeroCreateForm(forms.Form):

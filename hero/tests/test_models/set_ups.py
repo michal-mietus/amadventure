@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from ...models.hero import Hero
-from hero_upgrade_system.models.occupation import Occupation
+from hero.models.occupation import Occupation
 
 
 class UserAndHeroSetUp(TestCase):

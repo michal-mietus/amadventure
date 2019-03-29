@@ -17,9 +17,9 @@ class Occupation(models.Model):
 
     # TODO create separate class for this data ?
 
-    WARRIOR_MODULE = 'hero_upgrade_system.models.occupations.warrior'
-    MAGE_MODULE = 'hero_upgrade_system.models.occupations.mage'
-    THIEF_MODULE = 'hero_upgrade_system.models.occupations.thief'
+    WARRIOR_MODULE = 'hero.models.occupations.warrior'
+    MAGE_MODULE = 'hero.models.occupations.mage'
+    THIEF_MODULE = 'hero.models.occupations.thief'
 
     MODULES = (
         (WARRIOR_MODULE, WARRIOR_MODULE),
