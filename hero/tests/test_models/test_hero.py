@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .set_ups import UserAndHeroSetUp
-from hero_upgrade_system.models.statistics import Statistic
+from hero.models.statistic import Statistic
 from ...models.hero import Hero
 
 

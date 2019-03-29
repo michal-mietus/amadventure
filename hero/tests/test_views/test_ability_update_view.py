@@ -5,7 +5,7 @@ from django.core import serializers
 from django.core.management import call_command
 from django.contrib.auth.models import User
 from hero_upgrade_system.models.occupation import Occupation
-from hero_upgrade_system.models.statistics import Statistic
+from hero.models.statistic import Statistic
 from hero_upgrade_system.models.ability import Ability, HeroAbility
 from hero_upgrade_system.management.commands.create_abilities import Command as CreateAbilities
 from hero_upgrade_system.management.commands.create_occupations import Command as CreateOccupations

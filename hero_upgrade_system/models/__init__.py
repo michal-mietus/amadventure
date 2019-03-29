@@ -1,1 +1,1 @@
-from .statistics import Statistic
+from hero.models.statistic import Statistic
