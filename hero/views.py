@@ -8,7 +8,7 @@ from django import forms
 from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.core import serializers
-from hero_upgrade_system.models import occupations
+from hero.models import occupations
 from hero.models.occupation import Occupation
 from hero.models.statistic import Statistic
 from hero.models.ability import Ability, HeroAbility

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from hero.models.ability import Ability
 from hero.models.occupation import Occupation
-from hero_upgrade_system.models import occupations
+from hero.models import occupations
 
 
 class Command(BaseCommand):

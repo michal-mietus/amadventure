@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from hero.models.hero import Hero
 from hero.models.ability import Ability, HeroAbility
 from hero.models.occupation import Occupation
-from ...models.occupations import warrior
+from hero.models.occupations import warrior
 
 
 class TestHeroAbility(TestCase):
