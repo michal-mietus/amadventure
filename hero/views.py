@@ -35,7 +35,7 @@ class HeroCreateView(FormView):
             occupation=occupation,
         )
 
-        hero.create_initial_derivatives()
+        hero.create_all_initials()
         return super().form_valid(form)
 
     def get_current_user(self):
@@ -113,7 +113,7 @@ class AbilitiesUpdateView(FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({
-            'fields_names_and_min_values': self.get_current_hero().get_names_with_levels_dict()
+            'fields_names_and_min_values': self.get_current_hero().get_heroability_names_with_levels_dict()
         })
         return kwargs
 
