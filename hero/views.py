@@ -113,20 +113,9 @@ class AbilitiesUpdateView(FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({
-            'fields_names_and_min_values': self.get_fields_names_and_min_values()
+            'fields_names_and_min_values': self.get_current_hero().get_names_with_levels_dict()
         })
         return kwargs
-    
-    def get_fields_names_and_min_values(self):
-        hero = self.get_current_hero()
-        abilities = HeroAbility.objects.filter(hero=hero)
-        names_and_min_values = {}
-        for hero_ability in abilities:
-            names_and_min_values[hero_ability.ability.name] = hero_ability.level
-        return names_and_min_values
-
-    def get_hero_occupation(self):
-        return self.get_current_hero().occupation
 
     def get_initial(self):
         initial = super().get_initial()
