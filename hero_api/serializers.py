@@ -12,18 +12,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username', 'email', 'groups')
 
 
-class HeroSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Hero
-        fields = ('name', 'occupation')
-
-
-class HeroAbilitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HeroAbility
-        fields = ('id', 'level', 'ability', 'parent')
-        
-        
 class AbilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Ability
@@ -32,13 +20,34 @@ class AbilitySerializer(serializers.ModelSerializer):
             'parent', 'unblock_level', 'category',
         )
 
+
+class OccupationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Occupation
+        fields = ('id', 'name', 'description')
+
+
+class HeroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hero
+        fields = ('name', 'occupation', 'user')
+
+
+class HeroAbilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HeroAbility
+        fields = ('id', 'level', 'ability', 'parent')
+
+
 class HeroStatisticSerializer(serializers.ModelSerializer):
     class Meta:
         model = HeroStatistic
         fields = ('id', 'name', 'points')
 
 
-class OccupationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Occupation
-        fields = ('id', 'name', 'description')
+class HeroAllDataSerializer(serializers.Serializer):
+    hero = HeroSerializer()
+    statistics = HeroStatisticSerializer(many=True)
+    abilities = HeroAbilitySerializer(many=True)
+    occupation = OccupationSerializer()
+
