@@ -109,6 +109,12 @@ class Hero(models.Model):
         self.statistic_points = self.get_hero_statistics_free_points(statistics_form)
         self.save()
 
+    def get_names_with_levels_dict(self):
+        names_and_levels = {}
+        for hero_ability in self.heroability_set.all():
+            names_and_levels[hero_ability.ability.name] = hero_ability.level
+        return names_and_levels
+
 
 
 class HeroAbility(models.Model):
