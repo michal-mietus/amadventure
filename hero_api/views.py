@@ -105,6 +105,9 @@ class HeroStatisticAllUpgrade(APIView):
         for serializer in passed_serializers:
             serializer.save()
 
+        hero.statistic_points = request.data['heroStatisticPoints']
+        hero.save()
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
