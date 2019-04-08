@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from general_upgrade.models import Statistic
 from hero.models.occupation import Occupation
 from hero.models.ability import Ability
 
@@ -11,6 +12,8 @@ class Hero(models.Model):
     )
     name = models.CharField(max_length=35)
     occupation = models.ForeignKey(Occupation, on_delete=models.CASCADE)
+    level = models.PositiveIntegerField(default=1)
+    experience = models.PositiveIntegerField(default=0)
     statistic_points = models.PositiveIntegerField(default=15)
     # discrepancy of naming (in ability its Level)
     ability_points = models.PositiveIntegerField(default=3)
@@ -124,7 +127,7 @@ class HeroAbility(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        string_representation = self.hero.name + ' ' + self.ability.name
+        string_representation = self.hero.name + ' ' + self.ability.name.capitalize()
         return string_representation
         
 
@@ -160,17 +163,5 @@ class HeroAbility(models.Model):
         return core_abilities
 
 
-class HeroStatistic(models.Model):
-    STRENGTH = 'strength'
-    AGILITY = 'agility'
-    INTELLIGENCE = 'intelligence'
-
-    STATISTICS = (
-        (STRENGTH, STRENGTH),
-        (AGILITY, AGILITY),
-        (INTELLIGENCE, INTELLIGENCE),
-    )
-
-    name = models.CharField(max_length=35, choices=STATISTICS)
-    points = models.PositiveIntegerField(default=5)
+class HeroStatistic(Statistic):
     hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
