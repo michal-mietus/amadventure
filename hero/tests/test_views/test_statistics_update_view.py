@@ -77,18 +77,6 @@ class TestHeroStatisticsUpdateView(TestCase):
         for statistic in HeroStatistic.objects.filter(hero=self.hero):
             self.assertEqual(statistic.points, 5)
 
-    def test_valid_sets_new_statistc_points(self):
-        self.hero.statistic_points = 5
-        self.hero.save()
-        self.client.login(username='username', password='password')
-        response = self.client.post(self.url, {
-            'strength': 8,
-            'intelligence': 6,
-            'agility': 6,
-        })
-        self.hero = Hero.objects.get(pk=self.hero.pk)
-        self.assertEqual(self.hero.statistic_points, 0)
-
     def test_dont_allow_user_to_decrease_statistics(self):
         self.client.login(username='username', password='password')
         response = self.client.post(self.url, {

@@ -30,7 +30,7 @@ class OccupationSerializer(serializers.ModelSerializer):
 class HeroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hero
-        fields = ('name', 'occupation', 'user')
+        fields = ('name', 'occupation', 'user', 'statistic_points', 'ability_points')
 
 
 class HeroAbilitySerializer(serializers.ModelSerializer):

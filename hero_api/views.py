@@ -86,6 +86,56 @@ class HeroStatisticViewSet(viewsets.ModelViewSet):
         serializer = serializers.HeroStatisticSerializer(queryset, many=True)
         return Response(serializer.data)
 
+class HeroStatisticAllUpgrade(APIView):
+    http_method_names = ['post', 'head']
+
+    def post(self, request):
+        hero = Hero.objects.get(user__pk=request.user.pk)
+        passed_serializers = []
+        for statistic in request.data['statistics']:
+            statistic_object = hero.herostatistic_set.get(pk=statistic['id'])
+            serializer = serializers.HeroStatisticSerializer(
+                instance=statistic_object,
+                data=statistic,
+            )
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            passed_serializers.append(serializer)
+
+        for serializer in passed_serializers:
+            serializer.save()
+
+        hero.statistic_points = request.data['heroStatisticPoints']
+        hero.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class HeroAbilityAllUpgrade(APIView):
+    http_method_names = ['post', 'head']
+
+    def post(self, request):
+        hero = Hero.objects.get(user__pk=request.user.pk)
+        passed_serializers = []
+        print(request.data)
+        for ability in request.data['abilities']:
+            heroability_object = hero.heroability_set.get(pk=ability['id'])
+            serializer = serializers.HeroAbilitySerializer(
+                instance=heroability_object,
+                data=ability,
+            )
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            passed_serializers.append(serializer)
+
+        for serializer in passed_serializers:
+            serializer.save()
+        
+        hero.ability_points = request.data['heroAbilityPoints']
+        hero.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class OccupationViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
