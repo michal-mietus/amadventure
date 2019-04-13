@@ -10,4 +10,3 @@ class TestCreateLocationsCommand(TestCase):
         management.call_command('create_locations')
         for location_object, location_data in zip(Location.objects.all(), locations):
             self.assertEqual(location_object.name, location_data['name'])
-
