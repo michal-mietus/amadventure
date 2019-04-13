@@ -117,7 +117,13 @@ class Hero(models.Model):
         for hero_ability in self.heroability_set.all():
             names_and_levels[hero_ability.ability.name] = hero_ability.level
         return names_and_levels
-
+    
+    def get_unblocked_abilities(self):
+        hero_abilities = []
+        for ability in self.heroability_set.all():
+            if not ability.is_blocked():
+                hero_abilities.append(ability)
+        return hero_abilities
 
 
 class HeroAbility(models.Model):
