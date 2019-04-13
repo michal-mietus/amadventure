@@ -11,9 +11,11 @@ class Command(BaseCommand):
         self.create_occupation(Occupation.WARRIOR, Occupation.WARRIOR_MODULE)
         self.create_occupation(Occupation.MAGE, Occupation.MAGE_MODULE)
         self.create_occupation(Occupation.THIEF, Occupation.THIEF_MODULE)
-        print('Occupations created.')
+        print('Occupations created.\n')
         
     def create_occupation(self, name, module):
+        if Occupation.objects.filter(name=name):
+            raise Exception('This occupations already exists', name)
         Occupation.objects.create(
             name=name,
             module=module
