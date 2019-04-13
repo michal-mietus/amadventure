@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'hero_api',
     'general_upgrade',
     'artifical',
+    'combat_system',
+    'core',
 ]
 
 MIDDLEWARE = [
