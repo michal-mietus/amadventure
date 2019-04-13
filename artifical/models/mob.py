@@ -24,9 +24,9 @@ class Mob(models.Model):
         converter is a multiplier with which we will calculate mob level
     """
     # choice = (displaying_value, value)
-    EASY = ('easy', 1)
-    MEDIUM = ('medium', 1.5)
-    HARD = ('hard', 2)
+    EASY = (1, 'easy')
+    MEDIUM = (1.5, 'medium')
+    HARD = (2, 'hard')
 
     DIFFICULTY = (
         (EASY),
@@ -43,19 +43,3 @@ class Mob(models.Model):
     def __str__(self):
         representation = 'Mob ' + self.name
         return representation
-
-
-class FightingMob(models.Model):
-    mob = models.ForeignKey(Mob, on_delete=models.CASCADE)
-    level = models.PositiveIntegerField(default=1)
-
-    def __str__(self):
-        return 'Fighting mob ' + self.mob.name
-
-
-class FightingMobStatistic(Statistic):
-    """Statistics which inheritance from base Statistic class and are assigned to the given mob."""
-    mob = models.ForeignKey(FightingMob, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return 'Fighting mob statistic ' + self.mob.name 
