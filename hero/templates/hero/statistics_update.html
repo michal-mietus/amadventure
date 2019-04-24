@@ -1,0 +1,10 @@
+Points to use {{ points }}
+
+<form method="POST" action="{% url 'hero:statistics_update' %}">
+    {% csrf_token %}
+    {% for error in errors %}
+        {{ error }}
+    {% endfor %}
+    {{ form }}
+    <input type="submit" value="Update statistics">
+</form>
