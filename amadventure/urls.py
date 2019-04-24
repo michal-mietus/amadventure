@@ -20,6 +20,7 @@ from user import urls as user_urls
 from hero_api import urls as hero_api_urls
 from auth_api import urls as auth_api_urls
 from artifical import urls as artifical_api_urls
+from combat_system import urls as combat_system_api_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('api/hero/', include(hero_api_urls)),
     path('api/auth/', include(auth_api_urls)),
     path('api/artifical/', include(artifical_api_urls)),
+    path('api/combat/', include(combat_system_api_urls)),
 ]
