@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 .coverage*
 db.sqlite3
 *.pyc
 htmlcov/
 
 
-=======
-__pycache__/*
-*.pyc
-*.sqlite3
-htmlcov/
->>>>>>> 96883dda5ae9e899d2efe3b26007b95b12605f39
