@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import FightingMob, FightingMobStatistic
 
-# Register your models here.
+
+admin.site.register(FightingMob)
+admin.site.register(FightingMobStatistic)

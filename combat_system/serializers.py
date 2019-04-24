@@ -14,5 +14,5 @@ class FightingMobStatisticSerializer(serializers.ModelSerializer):
     class Meta:
         model = FightingMobStatistic
         fields = (
-            'mob', 'name', 'points'
+            'pk', 'mob', 'name', 'points'
         )
