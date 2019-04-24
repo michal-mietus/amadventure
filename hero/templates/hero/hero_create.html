@@ -1,0 +1,5 @@
+<form method="POST" action="{% url 'hero:hero_create' %}">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Create Hero">
+</form>
