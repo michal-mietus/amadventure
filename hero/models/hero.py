@@ -5,6 +5,12 @@ from hero.models.occupation import Occupation
 from hero.models.ability import Ability
 
 
+LEVEL_UP = {
+    'STATISTIC_POINTS': 3,
+    'ABILITY_POINTS': 1,
+}
+
+
 class Hero(models.Model):
     user = models.OneToOneField(
         User,
@@ -22,6 +28,21 @@ class Hero(models.Model):
         return 'Hero ' + self.name 
 
     ## skills = upgrade_sys.upgrade__skills.all (or one to one?)
+
+    def add_experience(self, experience):
+        self.experience += experience
+        if self.experience >= self.get_experience_to_level_up():
+            self.level_up()
+        self.save()
+
+    def level_up(self):
+            self.experience -= self.get_experience_to_level_up()
+            self.level += 1
+            self.statistic_points += LEVEL_UP['STATISTIC_POINTS']
+            self.ability_points += LEVEL_UP['ABILITY_POINTS']
+
+    def get_experience_to_level_up(self):
+        return self.level * 100
 
     def get_all_stats(self):
         return self.herostatistic_set.all()
