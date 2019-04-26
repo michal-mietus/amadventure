@@ -25,6 +25,19 @@ class HeroCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class HeroUpgradeView(APIView):
+    http_method_names = ['post', 'head']
+
+    def post(self, request):
+        try:
+            hero = Hero.objects.get(user__pk=request.user.pk)
+            hero.add_experience(experience=request.data['experience'])
+            return Response(data={}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print(e)
+            return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class HeroViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = Hero.objects.all().order_by('name')
