@@ -1,5 +1,7 @@
 from hero.models.hero import Hero
 from artifical.models import mob, location
+from artifical.models.item import  ItemWithStatistics
+from artifical.data.items import RARITIES
 
 
 class MobService:
@@ -31,4 +33,24 @@ class MobService:
 
     def get_location(self, location_name):
         return location.Location.objects.get(name=location_name)
+
+
+class ItemService:
+    def __init__(self):
+        self.item = None
+
+    def assign_item_to_hero(self, hero):
+        HeroItem.objects.create()
+
+    def create_item(self):
+        rarity = self.__draw_rarity()
+        if rarity:
+            item = ItemWithStatistics.objects.create()
+
+    def __draw_rarity(self):
+        drawn_number = random.randint(0, 100) / 100
+        for rarity in RARITIES.keys():
+          if drawn_number <= RARITIES[rarity]['chance']:
+            return RARITIES[rarity]
+        return None
 
