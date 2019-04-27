@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Statistic(models.Model):
+    POINTS_PER_LEVEL = 5
     STRENGTH = 'strength'
     AGILITY = 'agility'
     INTELLIGENCE = 'intelligence'
