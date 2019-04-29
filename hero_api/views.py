@@ -9,6 +9,8 @@ from hero.models.hero import Hero, HeroStatistic
 from hero.models.ability import Ability
 from hero.models.hero import HeroAbility
 from hero.models.occupation import Occupation
+from item.models import TemporaryItem
+from hero.models.hero import HeroItem
 
 
 class HeroCreateView(APIView):
@@ -151,7 +153,20 @@ class HeroAbilityAllUpgrade(APIView):
 
 
 class HeroAddItemView(APIView):
-    pass
+    def post(self, request):
+        id = self.request.data['id']
+        item = get_object_or_404(TemporaryItem, pk=id)
+        hero = get_object_or_404(Hero, user__pk=self.request.user.pk)
+        # temporaryitem_ptr=item doesn't work
+        hero_item = HeroItem.objects.create(
+            hero=hero,
+            name=item.name,
+            description=item.description,
+            level=item.level,
+            rarity=item.rarity
+            )
+        item.delete()        
+        return Response(None, status=status.HTTP_201_CREATED)
 
 
 class OccupationViewSet(viewsets.ModelViewSet):
