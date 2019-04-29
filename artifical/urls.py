@@ -10,5 +10,5 @@ router.register('location', views.LocationViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('expedition/<location_id>/', views.ExpeditionView.as_view())
+    path('expedition/<location_id>/', views.ExpeditionView.as_view()),
 ]
