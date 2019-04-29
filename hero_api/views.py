@@ -150,6 +150,10 @@ class HeroAbilityAllUpgrade(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class HeroAddItemView(APIView):
+    pass
+
+
 class OccupationViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = Occupation.objects.all()

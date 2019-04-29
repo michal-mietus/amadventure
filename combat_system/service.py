@@ -1,4 +1,5 @@
 import random
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from hero.models.hero import Hero
 from artifical.models.location import Location
@@ -34,7 +35,11 @@ class MobService:
         return fighting_mob
 
     def get_mob_level(self, mob):
-        hero = get_object_or_404(Hero, user__pk=self.request.user.pk)
+        #hero = get_object_or_404(Hero, user__pk=self.request.user.pk)
+        try:
+            hero = Hero.objects.get(user__pk=self.request.user.pk)
+        except ObjectDoesNotExist:
+            raise Exception('You don\'t have created hero!')
         return hero.level * int(float(mob.difficulty))
 
     def get_hero(self):

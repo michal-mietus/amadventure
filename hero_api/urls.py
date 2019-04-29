@@ -20,4 +20,5 @@ urlpatterns = [
     path('statistic/all/upgrade/', views.HeroStatisticAllUpgrade.as_view(), name="statistic_all_upgrade"),
     path('ability/all/upgrade/', views.HeroAbilityAllUpgrade.as_view(), name="ability_all_upgrade"),
     path('upgrade/', views.HeroUpgradeView.as_view(), name='hero_upgrade'),
+    path('item/add/', views.HeroAddItemView.as_view(), name='hero_add_item'),
 ]
