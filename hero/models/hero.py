@@ -1,6 +1,9 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from general_upgrade.models import Statistic
+from item.models import TemporaryItem
 from hero.models.occupation import Occupation
 from hero.models.ability import Ability
 
@@ -145,6 +148,41 @@ class Hero(models.Model):
             if not ability.is_blocked():
                 hero_abilities.append(ability)
         return hero_abilities
+
+
+class HeroItem(TemporaryItem):
+    hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
+
+
+class BodyPart(models.Model):
+    HEAD = 'head'
+    NECK = 'neck'
+    CHEST = 'chest'
+    LEFT_ARM = 'left_arm'
+    RIGHT_ARM = 'right_arm'
+    LEGS = 'legs'
+
+    BODY_PARTS = (
+        (HEAD, HEAD),
+        (NECK, NECK),
+        (CHEST, CHEST),
+        (LEFT_ARM, LEFT_ARM),
+        (RIGHT_ARM, RIGHT_ARM),
+        (LEGS, LEGS)
+    )
+
+    hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, choices=BODY_PARTS)
+    item = models.ForeignKey(HeroItem, on_delete=models.CASCADE, null=True)
+
+
+@receiver(post_save, sender=Hero)
+def create_body_parts(sender, instance, **kwargs):
+    for (body_part_name, _) in BodyPart.BODY_PARTS:
+        BodyPart.objects.create(
+            name=body_part_name,
+            hero=instance,
+        )
 
 
 class HeroAbility(models.Model):
