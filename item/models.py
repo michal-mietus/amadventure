@@ -1,7 +1,6 @@
 import random
 from django.db import models
 from general_upgrade.models import Statistic
-from hero.models.hero import Hero
 
 
 class TemporaryItem(models.Model):
@@ -9,11 +8,6 @@ class TemporaryItem(models.Model):
   description = models.TextField()
   level = models.PositiveIntegerField()
   rarity = models.CharField(max_length=50)
-
-
-class HeroItem(models.Model):
-  item = models.ForeignKey(TemporaryItem, on_delete=models.CASCADE)
-  hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
 
 
 class ItemStatistic(Statistic):
