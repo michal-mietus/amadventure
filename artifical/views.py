@@ -1,6 +1,6 @@
-from collections import namedtuple
-import requests
 import json
+import requests
+from collections import namedtuple
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from rest_framework import viewsets, status
