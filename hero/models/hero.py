@@ -30,8 +30,49 @@ class Hero(models.Model):
     def __str__(self):
         return 'Hero ' + self.name 
 
-    ## skills = upgrade_sys.upgrade__skills.all (or one to one?)
 
+    def create_all_initials(self):
+        """
+            Method to call all methods which have to be initialized
+            when hero is first time created.
+        """
+        self.create_initial_statistics()
+        self.create_initial_core_abilities()
+        self.create_initial_descendant_abilities()
+        self.create_initial_body_parts()
+
+    def create_initial_statistics(self):
+        for statistic in HeroStatistic.STATISTICS:
+            HeroStatistic.objects.create(
+                name=statistic[0],
+                hero=self,
+            )
+
+    def create_initial_core_abilities(self):
+        for ability in self.occupation.get_core_abilities():
+            HeroAbility.objects.create(
+                hero=self,
+                ability=ability,
+                parent=None,
+            )
+
+    def create_initial_descendant_abilities(self):
+        for ability in self.occupation.get_descendant_abilities():
+            parent_hero_ability = HeroAbility.objects.get(ability=ability.parent)
+            HeroAbility.objects.create(
+                hero=self,
+                ability=ability,
+                parent=parent_hero_ability,
+            )
+
+    def create_initial_body_parts(self):
+        for (body_part_name, _) in BodyPart.BODY_PARTS:
+            BodyPart.objects.create(
+                name=body_part_name,
+                hero=self,
+            )
+
+    ## skills = upgrade_sys.upgrade__skills.all (or one to one?)
     def add_experience(self, experience):
         self.experience += experience
         if self.experience >= self.get_experience_to_level_up():
@@ -69,39 +110,6 @@ class Hero(models.Model):
         for ability in self.heroability_set.all():
             points_sum += ability.level
         return points_sum
-
-    def create_all_initials(self):
-        """
-            Method to call all methods which have to be initialized
-            when hero is first time created.
-        """
-        self.create_initial_statistics()
-        self.create_initial_core_abilities()
-        self.create_initial_descendant_abilities()
-
-    def create_initial_statistics(self):
-        for statistic in HeroStatistic.STATISTICS:
-            HeroStatistic.objects.create(
-                name=statistic[0],
-                hero=self,
-            )
-
-    def create_initial_core_abilities(self):
-        for ability in self.occupation.get_core_abilities():
-            HeroAbility.objects.create(
-                hero=self,
-                ability=ability,
-                parent=None,
-            )
-
-    def create_initial_descendant_abilities(self):
-        for ability in self.occupation.get_descendant_abilities():
-            parent_hero_ability = HeroAbility.objects.get(ability=ability.parent)
-            HeroAbility.objects.create(
-                hero=self,
-                ability=ability,
-                parent=parent_hero_ability,
-            )
 
     def update_statistics(self, statistics_form):
         if self.is_form_valid(statistics_form):
@@ -149,6 +157,17 @@ class Hero(models.Model):
                 hero_abilities.append(ability)
         return hero_abilities
 
+    def get_items_in_backpack(self):
+        all_items = self.heroitem_set.all()
+        for body_part in self.bodypart_set.all():
+            if body_part.item in all_items:
+                all_items.exclude(pk=body_part.item.pk)
+        return all_items
+
+    def get_equipped_items(self):
+        equipped_items = [body_part.item for body_part in self.bodypart_set.all()]
+        return equipped_items
+
 
 class HeroItem(TemporaryItem):
     hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
@@ -174,15 +193,6 @@ class BodyPart(models.Model):
     hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, choices=BODY_PARTS)
     item = models.ForeignKey(HeroItem, on_delete=models.CASCADE, null=True)
-
-
-@receiver(post_save, sender=Hero)
-def create_body_parts(sender, instance, **kwargs):
-    for (body_part_name, _) in BodyPart.BODY_PARTS:
-        BodyPart.objects.create(
-            name=body_part_name,
-            hero=instance,
-        )
 
 
 class HeroAbility(models.Model):
@@ -223,7 +233,6 @@ class HeroAbility(models.Model):
         core_abilities = []
         for hero_ability in HeroAbility.objects.filter(hero=self.hero):
             if hero_ability.parent == None:
-                print(hero_ability)
                 core_abilities.append(hero_ability)
         return core_abilities
 
