@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from hero.models.hero import Hero, HeroStatistic
 from hero.models.ability import Ability
-from hero.models.hero import HeroAbility
+from hero.models.hero import HeroAbility, BodyPart, HeroItem
 from hero.models.occupation import Occupation
 
 
@@ -44,6 +44,23 @@ class HeroStatisticSerializer(serializers.ModelSerializer):
         model = HeroStatistic
         fields = ('id', 'name', 'points')
 
+
+class HeroItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HeroItem
+        fields = ('name', 'description', 'level', 'rarity')
+
+
+class BodyPartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BodyPart
+        fields = ('name', 'item')
+
+
+class HeroEquipmentSerializer(serializers.Serializer):
+    backpack_items = HeroItemSerializer(many=True)
+    body_parts_with_items = BodyPartSerializer(many=True)
+    
 
 class HeroAllDataSerializer(serializers.Serializer):
     hero = HeroSerializer()
