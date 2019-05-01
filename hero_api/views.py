@@ -13,6 +13,12 @@ from item.models import TemporaryItem
 from hero.models.hero import HeroItem
 
 
+class HeroViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = Hero.objects.all().order_by('name')
+    serializer_class = serializers.HeroSerializer
+
+
 class HeroCreateView(APIView):
     http_method_names = ['post', 'head']
 
@@ -35,15 +41,35 @@ class HeroUpgradeView(APIView):
             hero = Hero.objects.get(user__pk=request.user.pk)
             hero.add_experience(experience=request.data['experience'])
             return Response(data={}, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            print(e)
+        except Exception as error:
+            print(error)
             return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class HeroViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
-    queryset = Hero.objects.all().order_by('name')
-    serializer_class = serializers.HeroSerializer
+class HeroEquipmentView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            hero = Hero.objects.get(user__pk=request.user.pk)
+            backpack_items = hero.get_items_in_backpack()
+            body_parts_with_items = hero.bodypart_set.all()
+
+            DataPattern = self.get_data_pattern()
+            data = DataPattern(
+                backpack_items,
+                body_parts_with_items
+            )
+            serializer = serializers.HeroEquipmentSerializer(data)
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as error:
+            print(error)
+            return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_data_pattern(self):
+        return namedtuple('equipment', (
+            'backpack_items',
+            'body_parts_with_items'
+        ))
 
 
 class HeroAllDataViewSet(viewsets.ViewSet):
