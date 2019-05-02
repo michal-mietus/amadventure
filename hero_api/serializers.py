@@ -48,13 +48,13 @@ class HeroStatisticSerializer(serializers.ModelSerializer):
 class HeroItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = HeroItem
-        fields = ('name', 'description', 'level', 'rarity')
+        fields = ('id', 'name', 'description', 'level', 'rarity')
 
 
 class BodyPartSerializer(serializers.ModelSerializer):
     class Meta:
         model = BodyPart
-        fields = ('name', 'item')
+        fields = ('id', 'name', 'item')
 
 
 class HeroEquipmentSerializer(serializers.Serializer):
