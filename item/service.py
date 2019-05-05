@@ -2,7 +2,7 @@ import random
 from hero.models.hero import Hero
 from general_upgrade.models import Statistic
 from artifical.models import mob, location
-from item.models import  TemporaryItem, ItemStatistic
+from item.models import  TemporaryItem, ItemStatistic, Item
 from item.data.items import items, RARITIES
 
 
@@ -47,8 +47,7 @@ class ItemService:
         return created_item
 
     def __create_item(self, level, rarity):
-        item = random.choice(items['rarity'][rarity])
-        created_item = self.__create_item_and_statistics(item, level)    
+        created_item = self.__create_item_and_statistics(level, rarity)
         return created_item
 
     def __draw_rarity(self):
@@ -60,24 +59,29 @@ class ItemService:
                 return RARITIES[rarity]['name']
         return None
 
-    def __create_item_and_statistics(self, item, level):
-        created_item = TemporaryItem.objects.create(
-            name=item['name'],
-            description=item['description'],
-            level=level,
-            rarity=item['rarity']
+    def __create_item_and_statistics(self, level, rarity):
+        item = self.__draw_item(rarity)
+        temporary_item = TemporaryItem.objects.create(
+            item=item,
+            level=level
         )
-        self.__create_statistics(created_item, item['statistics'])
-        return created_item
+        self.__create_statistics(temporary_item, item)
+        return temporary_item
+    
+    def __draw_item(self, rarity):
+        items_with_given_rarity = Item.objects.filter(rarity=rarity)
+        item = random.choice(items_with_given_rarity)
+        return item
 
-    def __create_statistics(self, item, main_statistics):
+    def __create_statistics(self, temporary_item, item):
+        main_statistics = [mainstatistic.name for mainstatistic in item.mainstatistic_set.all()]
         rarity = item.rarity
         for statistic in Statistic.STATISTICS:
-            name = statistic[0]
-            if statistic[0] in main_statistics:
-                self.__create_main_statistic(name, rarity, item)
+            statistic_name = statistic[0]
+            if statistic_name in main_statistics:
+                self.__create_main_statistic(statistic_name, rarity, temporary_item)
             else:
-                self.__create_statistic(name, item)
+                self.__create_statistic(statistic_name, temporary_item)
 
     def __create_main_statistic(self, name, rarity, item):
         bottom_scope = self.__get_main_statistic_points_bottom_scope(rarity)
@@ -102,7 +106,7 @@ class ItemService:
 
     def __get_main_statistic_points_top_scope(self, rarity):
         statistic_scope = self.__get_statistic_points_top_scope()
-        multiplier = self.RARITY_MULTIPLIERS[rarity['name']]
+        multiplier = self.RARITY_MULTIPLIERS[rarity]
         return statistic_scope * multiplier
     
     def __get_main_statistic_points_bottom_scope(self, rarity):
