@@ -15,6 +15,7 @@ class Command(BaseCommand):
     def create_items(self):
         for rarity, items_list in items['rarity'].items():
             for item in items_list:
+                self.is_already_created_item(item['name'])
                 item_object = Item(
                     name=item['name'],
                     description=item['description'],
@@ -24,6 +25,10 @@ class Command(BaseCommand):
                 item_object.image = image_path
                 item_object.save()
                 self.create_item_main_statistics(item, item_object)
+
+    def is_already_created_item(self, item_name):
+        if Item.objects.filter(name=item_name):
+            raise Exception('This item already exists', item_name)
 
     def create_item_main_statistics(self, item_data, item_as_object):
         for statistic in item_data['statistics']:
