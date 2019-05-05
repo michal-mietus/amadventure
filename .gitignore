@@ -1,4 +1,5 @@
 __pycache__/*
+*.jpg
 *.pyc
 *.sqlite3
 htmlcov/
