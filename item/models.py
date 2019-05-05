@@ -3,11 +3,25 @@ from django.db import models
 from general_upgrade.models import Statistic
 
 
-class TemporaryItem(models.Model):
+
+
+class Item(models.Model):
+  ITEMS_IMAGES_LOCATION = 'assets/items/'
+
   name = models.CharField(max_length=50)
   description = models.TextField()
-  level = models.PositiveIntegerField()
   rarity = models.CharField(max_length=50)
+  image = models.ImageField(upload_to='assets/items')
+
+
+class MainStatistic(models.Model):
+  item = models.ForeignKey(Item, on_delete=models.CASCADE)
+  name = models.CharField(max_length=50)
+
+
+class TemporaryItem(models.Model):
+  item = models.ForeignKey(Item, on_delete=models.CASCADE)
+  level = models.PositiveIntegerField()
 
 
 class ItemStatistic(Statistic):
