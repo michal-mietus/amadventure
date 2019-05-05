@@ -31,6 +31,7 @@ items = {
                 'statistics': [
                     Statistic.STRENGTH
                 ],
+                'image': 'swords/sword_1.jpg',
             },
             {
                 'name': 'helmet',
@@ -38,7 +39,8 @@ items = {
                 'rarity': RARITIES['common'],
                 'statistics': [
                     Statistic.HEALTH
-                ]
+                ],
+                'image': 'helmets/helmet_1.jpg',
             },
             {
                 'name': 'bow',
@@ -46,15 +48,17 @@ items = {
                 'rarity': RARITIES['common'],
                 'statistics': [
                     Statistic.AGILITY
-                ]
+                ],
+                'image': 'bows/bow_1.jpg',
             },
             {
-                'name': 'staff',
-                'description': 'Staff description',
+                'name': 'Wand',
+                'description': 'Wand description',
                 'rarity': RARITIES['common'],
                 'statistics': [
                     Statistic.INTELLIGENCE
-                ]
+                ],
+                'image': 'wands/magic_wand_1.jpg',
             },
         ],
         
@@ -67,7 +71,8 @@ items = {
                 'statistics': [
                     Statistic.INTELLIGENCE,
                     Statistic.HEALTH,
-                ]
+                ],
+                'image': 'spelbooks/spelbook_9.jpg',
             },
         ],
     }
