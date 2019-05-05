@@ -158,7 +158,6 @@ class HeroAbilityAllUpgrade(APIView):
     def post(self, request):
         hero = Hero.objects.get(user__pk=request.user.pk)
         passed_serializers = []
-        print(request.data)
         for ability in request.data['abilities']:
             heroability_object = hero.heroability_set.get(pk=ability['id'])
             serializer = serializers.HeroAbilitySerializer(
@@ -186,12 +185,9 @@ class HeroAddItemView(APIView):
         # temporaryitem_ptr=item doesn't work
         hero_item = HeroItem.objects.create(
             hero=hero,
-            name=item.name,
-            description=item.description,
+            item=item.item,
             level=item.level,
-            rarity=item.rarity
             )
-        item.delete()        
         return Response(None, status=status.HTTP_201_CREATED)
 
 
