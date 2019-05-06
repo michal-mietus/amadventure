@@ -50,25 +50,42 @@ class HeroEquipmentView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             hero = Hero.objects.get(user__pk=request.user.pk)
+
             backpack_items = hero.get_items_in_backpack()
             body_parts_with_items = hero.bodypart_set.all()
+            temporary_items = [backpack_item.item for backpack_item in backpack_items]
+            general_items = [temporary_item.item for temporary_item in temporary_items]
+            items_statistics = self.get_items_statistics(temporary_items)
 
             DataPattern = self.get_data_pattern()
             data = DataPattern(
                 backpack_items,
-                body_parts_with_items
+                body_parts_with_items,
+                temporary_items,
+                general_items,
+                items_statistics
             )
             serializer = serializers.HeroEquipmentSerializer(data)
-
+            
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         except Exception as error:
             print(error)
             return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get_items_statistics(self, temporary_items):
+        items_statistics = []
+        for temporary_item in temporary_items:
+            items_statistics.extend(temporary_item.itemstatistic_set.all())
+
+        return items_statistics
 
     def get_data_pattern(self):
-        return namedtuple('equipment', (
+        return namedtuple('equipment', (            
             'backpack_items',
-            'body_parts_with_items'
+            'body_parts_with_items',
+            'temporary_items',
+            'general_items',
+            'items_statistics',
         ))
 
 
@@ -182,11 +199,9 @@ class HeroAddItemView(APIView):
         id = self.request.data['id']
         item = get_object_or_404(TemporaryItem, pk=id)
         hero = get_object_or_404(Hero, user__pk=self.request.user.pk)
-        # temporaryitem_ptr=item doesn't work
         hero_item = HeroItem.objects.create(
             hero=hero,
-            item=item.item,
-            level=item.level,
+            item=item,
             )
         return Response(None, status=status.HTTP_201_CREATED)
 
