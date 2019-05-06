@@ -169,8 +169,9 @@ class Hero(models.Model):
         return equipped_items
 
 
-class HeroItem(TemporaryItem):
+class HeroItem(models.Model):
     hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
+    item = models.ForeignKey(TemporaryItem, on_delete=models.CASCADE)
 
 
 class BodyPart(models.Model):
