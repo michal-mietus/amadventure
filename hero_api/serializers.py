@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from item.serializers import ItemSerializer, ItemStatisticSerializer, TemporaryItemSerializer
 from hero.models.hero import Hero, HeroStatistic
 from hero.models.ability import Ability
 from hero.models.hero import HeroAbility, BodyPart, HeroItem
@@ -48,7 +49,7 @@ class HeroStatisticSerializer(serializers.ModelSerializer):
 class HeroItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = HeroItem
-        fields = ('id', 'name', 'description', 'level', 'rarity')
+        fields = ('id',  'hero', 'item')
 
 
 class BodyPartSerializer(serializers.ModelSerializer):
@@ -60,6 +61,9 @@ class BodyPartSerializer(serializers.ModelSerializer):
 class HeroEquipmentSerializer(serializers.Serializer):
     backpack_items = HeroItemSerializer(many=True)
     body_parts_with_items = BodyPartSerializer(many=True)
+    temporary_items = TemporaryItemSerializer(many=True)
+    general_items = ItemSerializer(many=True)
+    items_statistics = ItemStatisticSerializer(many=True)
     
 
 class HeroAllDataSerializer(serializers.Serializer):
