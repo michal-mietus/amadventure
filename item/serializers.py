@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from item.models import TemporaryItem
-from item.models import ItemStatistic
+from item.models import TemporaryItem, Item, ItemStatistic
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = '__all__'
 
 
 class TemporaryItemSerializer(serializers.ModelSerializer):
